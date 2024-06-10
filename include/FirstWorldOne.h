@@ -16,11 +16,14 @@
 
 class FirstWorldOne final : public Phase{
 public:
-    explicit FirstWorldOne();
+    explicit FirstWorldOne(int MarioLevel);
 
     ~FirstWorldOne() = default;
 
     void Start(App *app) override;
+
+private:
+    int MarioLevel = 0;
 
 };
 

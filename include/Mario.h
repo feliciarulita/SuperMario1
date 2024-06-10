@@ -205,6 +205,7 @@ public:
     bool MarioStepKoopa = false;
     bool MarioLevelingUp = false;
     bool MarioLevelingDown = false;
+    bool MarioGoUp = false;
 
 
     void Update(unsigned long BaseTime);
@@ -217,7 +218,7 @@ public:
     bool m_Jump=false;
     bool m_HasEnded=true;
 
-
+    float speed = 0.0f;
     float time_mario ;
     float y_start_mario =0.0f;
     float PowerJump = 0.0f;

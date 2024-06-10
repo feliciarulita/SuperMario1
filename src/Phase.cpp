@@ -43,16 +43,24 @@ void Phase::Restart(App *app) {
     m_Bg2 = nullptr;
     m_Pillar = nullptr;
     m_Flag = nullptr;
-    m_BrickMove = nullptr;
     m_TubeBig = nullptr;
-
+    m_TubeBig2 = nullptr;
 
     m_DeadQues.clear();
+    m_BrickMove.clear();
     m_Land.clear();
     m_Brick.clear();
     m_Tube.clear();
     m_Wood.clear();
     m_Castle.clear();
+    m_MovingPlatform.clear();
+    m_MovingPlatform2.clear();
+    m_TubeBig2Vec.clear();
+    m_Brick_break.clear();
+    m_Coins.clear();
+    m_Brick.clear();
+
+    m_BrickBreak = nullptr;
 
     m_YellowMushVec.clear();
 
@@ -72,7 +80,6 @@ void Phase::Restart(App *app) {
 
     m_YellowMush = nullptr;
 
-    m_Coins = nullptr;
 
     m_Coins2 = nullptr;
 
@@ -84,12 +91,16 @@ void Phase::Restart(App *app) {
     positionLand = {0.0f,0.0f};
 
     m_PRM = nullptr;
-
+    MarioSlidesRight.clear();
+    MarioSlidesLeft.clear();
+    MarioSlidesRightLvl2.clear();
+    MarioSlidesLeftLvl2.clear();
     MarioRun.clear();
     MarioRunLvl2.clear();
     MarioRunBack.clear();
     MarioRunBackLvl2.clear();
     MarioPillar.clear();
+    MarioPillar2.clear();
     MarioShrink.clear();
     Mushroom1.clear();
     QuestionMark.clear();
@@ -105,7 +116,9 @@ void Phase::Restart(App *app) {
     MarioJumpBackLvl2.clear();
     YellowMushroom.clear();
     MarioPillarEnd.clear();
-    Coins.clear();
+    MarioPillarEnd2.clear();
+    CoinsLvl2.clear();
+    KoopaBack.clear();
 
     index=0;
     index2=0;
@@ -114,6 +127,8 @@ void Phase::Restart(App *app) {
     indexMush = 0;
     countBlinkTime = 0;
     BlinkTime = 0;
+    isBrick = 0;
+    MarioLevel = 0;
 
     slideTime=0;
     SpeedInAir=0;
@@ -140,7 +155,6 @@ void Phase::Restart(App *app) {
     m_EnterRight = true;
     m_EnterLeft = false;
     m_Collide = false;
-    isBrick = true;
     isWinLevel = false;
     winSong = false;
     leftSlide = false;
@@ -149,7 +163,9 @@ void Phase::Restart(App *app) {
     marioStart = false;
 
 
+
 }
+
 
 void Phase::End(App *app) {
     app->m_Root.RemoveAllChildren();
@@ -161,5 +177,9 @@ void Phase::StartLevel(App *app) {
 }
 
 void Phase::StartLevel2(App *app) {
+    SetState(State::UPDATE);
+}
+
+void Phase::Finish(App *app) {
     SetState(State::UPDATE);
 }

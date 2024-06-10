@@ -3,8 +3,9 @@
 //
 #include "FirstWorldTwo.h"
 
-FirstWorldTwo::FirstWorldTwo() {
+FirstWorldTwo::FirstWorldTwo(int MarioLevel) {
     m_CurrentState = State::START;
+    this->MarioLevel = MarioLevel;
 }
 
 

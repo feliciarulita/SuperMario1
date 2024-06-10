@@ -23,6 +23,8 @@ public:
 
     bool isMushInside = false;
 
+    bool isHeaded = false;
+
 private:
     void ResetPosition() { m_Transform.translation = {0, 0}; }
 

@@ -47,6 +47,7 @@ public:
 
     [[nodiscard]] bool IfAnimationEnds() const;
 
+    bool isHeaded = false;
     bool isActive = true;
     bool isMushInside = false;
     int indexMush;

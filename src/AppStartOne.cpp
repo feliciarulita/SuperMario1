@@ -76,6 +76,27 @@ void FirstWorldOne::Start(App *app){
 
     app->m_Root.AddChild(m_Bg2);
 
+    //mario slide
+    //slide to right
+    MarioSlidesRight.reserve(2);
+    MarioSlidesRight.emplace_back(GA_RESOURCE_DIR"/Mario/mario_st_right.png");
+    MarioSlidesRight.emplace_back(GA_RESOURCE_DIR"/Mario/mario_st_right.png");
+
+    //slide to left
+    MarioSlidesLeft.reserve(2);
+    MarioSlidesLeft.emplace_back(GA_RESOURCE_DIR"/Mario/mario_st_left.png");
+    MarioSlidesLeft.emplace_back(GA_RESOURCE_DIR"/Mario/mario_st_left.png");
+
+    //slide to right lvl
+    MarioSlidesRightLvl2.reserve(2);
+    MarioSlidesRightLvl2.emplace_back(GA_RESOURCE_DIR"/Mario/mario1_st_right.png");
+    MarioSlidesRightLvl2.emplace_back(GA_RESOURCE_DIR"/Mario/mario1_st_right.png");
+
+    //slide to left lvl 2
+    MarioSlidesLeftLvl2.reserve(2);
+    MarioSlidesLeftLvl2.emplace_back(GA_RESOURCE_DIR"/Mario/mario1_st_left.png");
+    MarioSlidesLeftLvl2.emplace_back(GA_RESOURCE_DIR"/Mario/mario1_st_left.png");
+
 
     //Mario Jump
     MarioJump.reserve(2);
@@ -133,11 +154,6 @@ void FirstWorldOne::Start(App *app){
     MarioPillar.reserve(2);
     MarioPillar.emplace_back(GA_RESOURCE_DIR"/Mario/mario_end.png");
     MarioPillar.emplace_back(GA_RESOURCE_DIR"/Mario/mario_end1.png");
-
-    m_MarioPillar = std::make_shared<Mario>(MarioPillar);
-    m_MarioPillar->SetZIndex(10);
-    m_MarioPillar->SetVisible(false);
-    app->m_Root.AddChild(m_MarioPillar);
 
     MarioPillar2.reserve(2);
     MarioPillar2.emplace_back(GA_RESOURCE_DIR"/Mario/mario1_end1.png");
@@ -331,13 +347,14 @@ void FirstWorldOne::Start(App *app){
     m_Brick[28]->SetPosition({5107.0f,-82.0f});
     m_Brick[29]->SetPosition({5171.0f,-82.0f});
 
-
-
-    m_BrickMove = std::make_shared<Brick>(GA_RESOURCE_DIR"/images/inAir1.png");
-    m_BrickMove->SetZIndex(5);
-    m_BrickMove->SetPosition({-1000.0f,-1000.0f});
-    m_BrickMove->SetVisible(true);
-    app->m_Root.AddChild(m_BrickMove);
+    //brick move
+    for(int i=0;i<256;i++){
+        m_BrickMove.push_back(std::make_shared<Character>(GA_RESOURCE_DIR"/images/inAir1.png"));
+        m_BrickMove[i]->SetZIndex(5);
+        m_BrickMove[i]->SetVisible(false);
+        m_BrickMove[i]->SetPosition({-1000.0f,-1000.0f});
+        app->m_Root.AddChild(m_BrickMove[i]);
+    }
 
     //brick_break
     m_Brick_break.resize(31);
@@ -347,11 +364,11 @@ void FirstWorldOne::Start(App *app){
     for(int i = 0;i<31;i++){
 
         for (int x =0 ; x<5 ;x++) {
-            const auto BrickBreak = std::make_shared<Brick>(GA_RESOURCE_DIR"/images/block_debris0.png");
-            BrickBreak->SetZIndex(100);
-            BrickBreak->SetVisible(false);
-            app->m_Root.AddChild(BrickBreak);
-            m_Brick_break[i][x] = BrickBreak;
+            m_BrickBreak = std::make_shared<Brick>(GA_RESOURCE_DIR"/images/block_debris0.png");
+            m_BrickBreak->SetZIndex(100);
+            m_BrickBreak->SetVisible(false);
+            app->m_Root.AddChild(m_BrickBreak);
+            m_Brick_break[i][x] = m_BrickBreak;
 
         }
     }
@@ -478,7 +495,7 @@ void FirstWorldOne::Start(App *app){
     for(int i = 0; i < 2; i++){
         m_Castle.push_back(std::make_shared<Character>(GA_RESOURCE_DIR"/images/blackCastle.png"));
         m_Castle[i]->SetZIndex(100);
-        m_Castle[i]->SetVisible(false);
+        m_Castle[i]->SetVisible(true);
         m_Castle[i]->SetPosition({6547.0f,-172.0f + (i*32.0f)});
         app->m_Root.AddChild(m_Castle[i]);
     }
@@ -493,15 +510,16 @@ void FirstWorldOne::Start(App *app){
     for(int i = 0 ; i < 3 ; i++){
         Coins.emplace_back(GA_RESOURCE_DIR"/images/coin_an"+std::to_string(i)+".png");
     }
-
-    m_Coins = std::make_shared<AnimatedCharacter>(Coins);
-    m_Coins->SetInterval(100);
-    m_Coins->SetZIndex(3);
-    m_Coins->SetVisible(false);
-    m_Coins->SetLooping(true);
-    m_Coins->SetPlaying();
-    m_Coins->SetPosition({-1000.0f,-1000.0f});
-    app->m_Root.AddChild(m_Coins);
+    for(int i=0;i<14;i++){
+        m_Coins.push_back(std::make_shared<AnimatedCharacter>(Coins));
+        m_Coins[i]->SetInterval(100);
+        m_Coins[i]->SetZIndex(3);
+        m_Coins[i]->SetVisible(false);
+        m_Coins[i]->SetLooping(true);
+        m_Coins[i]->SetPlaying();
+        m_Coins[i]->SetPosition({-1000.0f,-1000.0f});
+        app->m_Root.AddChild(m_Coins[i]);
+    }
 
     //level up mush
     YellowMushroom.reserve(2);

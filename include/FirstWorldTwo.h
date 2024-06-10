@@ -16,7 +16,7 @@
 
 class FirstWorldTwo final : public Phase{
 public:
-    explicit FirstWorldTwo();
+    explicit FirstWorldTwo(int MarioLevel);
 
     ~FirstWorldTwo() = default;
 
@@ -25,6 +25,9 @@ public:
     void StartLevel(App *app) override;
 
     void StartLevel2(App *app) override;
+
+    void Finish(App *app) override;
+
 };
 
 #endif //SUPERMARIO1_FIRSTWORLDTWO_H
