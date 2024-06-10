@@ -4,8 +4,9 @@
 #include "FirstWorldOne.h"
 #include <iostream>
 
-FirstWorldOne::FirstWorldOne() {
+FirstWorldOne::FirstWorldOne(int MarioLevel): MarioLevel(MarioLevel) {
     m_CurrentState = State::START;
+    this->MarioLevel=MarioLevel;
 }
 
 

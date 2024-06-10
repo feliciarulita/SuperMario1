@@ -40,11 +40,10 @@ public:
      */
     void RemoveChild(std::shared_ptr<GameObject> child);
 
-    /**
+     /**
      * @brief Remove all children.
      */
      void RemoveAllChildren();
-
     /**
      * @brief Draw children according to their z-index.
      *

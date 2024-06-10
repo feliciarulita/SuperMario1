@@ -16,6 +16,7 @@ public:
         STARTLEVEL,
         STARTLEVEL2,
         UPDATE,
+        FINISH,
         END,
         EXIT,
     };
@@ -32,7 +33,9 @@ public:
 
     virtual void Update(App *app);
 
-    virtual void End(App *app) ;
+    virtual void Finish(App *app);
+
+    virtual void End(App *app);
 
     void Restart(App *app);
 
@@ -73,20 +76,26 @@ public:
     std::shared_ptr<Character> m_Bg2;
     std::shared_ptr<Character> m_Pillar;
     std::shared_ptr<Character> m_Flag;
-    std::shared_ptr<Character> m_BrickMove;
     std::shared_ptr<Character> m_TubeBig;
+    std::shared_ptr<Character> m_TubeBig2;
+    std::shared_ptr<Character> m_Land2;
+    std::shared_ptr<Character> m_Tube2;
 
     std::vector<std::shared_ptr<Character>> m_DeadQues;
+    std::vector<std::shared_ptr<Character>> m_BrickMove;
     std::vector<std::shared_ptr<Character>> m_Land;
     std::vector<std::shared_ptr<Character>> m_Tube;
     std::vector<std::shared_ptr<Character>> m_Wood;
     std::vector<std::shared_ptr<Character>> m_Castle;
     std::vector<std::shared_ptr<Character>> m_MovingPlatform;
     std::vector<std::shared_ptr<Character>> m_MovingPlatform2;
+    std::vector<std::shared_ptr<Character>> m_TubeBig2Vec;
 
     std::vector<std::shared_ptr<Brick>> m_Brick;
 
     std::vector<std::vector<std::shared_ptr<Brick>>> m_Brick_break;
+
+    std::shared_ptr<Brick> m_BrickBreak;
 
     std::vector<std::shared_ptr<YellowMush>> m_YellowMushVec;
 
@@ -106,11 +115,10 @@ public:
 
     std::shared_ptr<YellowMush> m_YellowMush;
 
-    std::shared_ptr<AnimatedCharacter> m_Coins;
-
     std::shared_ptr<AnimatedCharacter> m_Coins2;
 
     std::vector<std::shared_ptr<AnimatedCharacter>> m_Coins2Vec;
+    std::vector<std::shared_ptr<AnimatedCharacter>> m_Coins;
 
     std::shared_ptr<Koopa> m_Koopa;
 
@@ -119,6 +127,10 @@ public:
 
     std::shared_ptr<PhaseResourcesManager> m_PRM;
 
+    std::vector<std::string> MarioSlidesRight;
+    std::vector<std::string> MarioSlidesLeft;
+    std::vector<std::string> MarioSlidesRightLvl2;
+    std::vector<std::string> MarioSlidesLeftLvl2;
     std::vector<std::string> MarioRun;
     std::vector<std::string> MarioRunLvl2;
     std::vector<std::string> MarioRunBack;
@@ -152,6 +164,8 @@ public:
     int countBlinkTime = 0;
     int BlinkTime = 0;
     int isBrick = 0;
+    int MarioLevel = 0;
+    int MarioComesOutTime = 0;
 
     float slideTime=0;
     float SpeedInAir=0;
@@ -184,6 +198,8 @@ public:
     bool rightSlide = false;
     bool pressUp = false;
     bool marioStart = false;
+    bool FinishLevel = false;
+    bool marioFromTube = false;
 
     void Rendering();
 

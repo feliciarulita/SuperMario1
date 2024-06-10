@@ -19,8 +19,6 @@ add_executable(${PROJECT_NAME} ${SRC_FILES} ${HEADER_FILES}
         src/AppStartOne.cpp
         src/AppUpdate.cpp
         src/AppEnd.cpp
-        include/MarioJump.h
-        src/MarioJump.cpp
         include/QuestionTiles.h
         src/QuestionTiles.cpp
         include/TEXTS.h

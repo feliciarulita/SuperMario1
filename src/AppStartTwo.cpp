@@ -12,20 +12,38 @@
 
 void FirstWorldTwo::Start(App *app) {
     LOG_TRACE("Start Second World!");
-
+    LOG_DEBUG("mario level 2");
+    LOG_DEBUG(MarioLevel);
     m_Bg = std::make_shared<BackgroundImage>(GA_RESOURCE_DIR"/Background/WorldTwoBegin.png");
-
     app->m_Root.AddChild(m_Bg);
 
     //Mario run forward
+
     MarioRun.reserve(5);
     MarioRun.emplace_back(GA_RESOURCE_DIR"/Mario/mario.png");
     for(int i = 0; i < 3; i++){
         MarioRun.emplace_back(GA_RESOURCE_DIR"/Mario/mario_move"+ std::to_string(i)+ ".png");
     }
     MarioRun.emplace_back(GA_RESOURCE_DIR"/Mario/mario.png");
-    m_Mario = std::make_shared<Mario>(MarioRun);
-    m_Mario->SetPosition({-265.0f, -172.0f});
+
+    MarioRunLvl2.reserve(5);
+    MarioRunLvl2.emplace_back(GA_RESOURCE_DIR"/Mario/mario1.png");
+    for(int i=0;i<3;i++){
+        MarioRunLvl2.emplace_back(GA_RESOURCE_DIR"/Mario/mario1_move"+std::to_string(i)+".png");
+    }
+    MarioRunLvl2.emplace_back(GA_RESOURCE_DIR"/Mario/mario1.png");
+
+    if(MarioLevel==0){
+        m_Mario = std::make_shared<Mario>(MarioRun);
+        m_Mario->level=0;
+        m_Mario->SetPosition({-265.0f, -172.0f});
+    }
+    else if(MarioLevel==1){
+        m_Mario = std::make_shared<Mario>(MarioRunLvl2);
+        m_Mario->level=1;
+        m_Mario->SetPosition({-265.0f, -156.0f});
+    }
+
     m_Mario->SetInterval(100);
     m_Mario->SetZIndex(50);
     m_Mario->SetVisible(true);
@@ -129,6 +147,26 @@ void FirstWorldTwo::StartLevel2(App *app) {
 
     app->m_Root.AddChild(m_Bg2);
 
+    //mario slide
+    //slide to right
+    MarioSlidesRight.reserve(2);
+    MarioSlidesRight.emplace_back(GA_RESOURCE_DIR"/Mario/mario_st_right.png");
+    MarioSlidesRight.emplace_back(GA_RESOURCE_DIR"/Mario/mario_st_right.png");
+
+    //slide to left
+    MarioSlidesLeft.reserve(2);
+    MarioSlidesLeft.emplace_back(GA_RESOURCE_DIR"/Mario/mario_st_left.png");
+    MarioSlidesLeft.emplace_back(GA_RESOURCE_DIR"/Mario/mario_st_left.png");
+
+    //slide to right lvl
+    MarioSlidesRightLvl2.reserve(2);
+    MarioSlidesRightLvl2.emplace_back(GA_RESOURCE_DIR"/Mario/mario1_st_right.png");
+    MarioSlidesRightLvl2.emplace_back(GA_RESOURCE_DIR"/Mario/mario1_st_right.png");
+
+    //slide to left lvl 2
+    MarioSlidesLeftLvl2.reserve(2);
+    MarioSlidesLeftLvl2.emplace_back(GA_RESOURCE_DIR"/Mario/mario1_st_left.png");
+    MarioSlidesLeftLvl2.emplace_back(GA_RESOURCE_DIR"/Mario/mario1_st_left.png");
 
     //Mario Jump
     MarioJump.reserve(2);
@@ -154,6 +192,13 @@ void FirstWorldTwo::StartLevel2(App *app) {
     MarioPillarEnd2.reserve(1);
     MarioPillarEnd2.emplace_back(GA_RESOURCE_DIR"/Mario/mario1_endBack.png");
 
+    MarioRunLvl2.reserve(5);
+    MarioRunLvl2.emplace_back(GA_RESOURCE_DIR"/Mario/mario1.png");
+    for(int i=0;i<3;i++){
+        MarioRunLvl2.emplace_back(GA_RESOURCE_DIR"/Mario/mario1_move"+std::to_string(i)+".png");
+    }
+    MarioRunLvl2.emplace_back(GA_RESOURCE_DIR"/Mario/mario1.png");
+
     //Mario run forward
     MarioRun.reserve(5);
     MarioRun.emplace_back(GA_RESOURCE_DIR"/Mario/mario.png");
@@ -161,7 +206,17 @@ void FirstWorldTwo::StartLevel2(App *app) {
         MarioRun.emplace_back(GA_RESOURCE_DIR"/Mario/mario_move"+ std::to_string(i)+ ".png");
     }
     MarioRun.emplace_back(GA_RESOURCE_DIR"/Mario/mario.png");
-    m_Mario = std::make_shared<Mario>(MarioRun);
+
+    LOG_DEBUG("lvl 2 start");
+    LOG_DEBUG(MarioLevel);
+    if(MarioLevel==0){
+        m_Mario = std::make_shared<Mario>(MarioRun);
+        m_Mario->level=0;
+    }
+    else if(MarioLevel==1){
+        m_Mario = std::make_shared<Mario>(MarioRunLvl2);
+        m_Mario->level=1;
+    }
     m_Mario->SetPosition({-265.0f, 200.0f});
     m_Mario->SetInterval(100);
     m_Mario->SetZIndex(50);
@@ -187,14 +242,6 @@ void FirstWorldTwo::StartLevel2(App *app) {
     MarioPillar.emplace_back(GA_RESOURCE_DIR"/Mario/mario_end.png");
     MarioPillar.emplace_back(GA_RESOURCE_DIR"/Mario/mario_end1.png");
 
-    m_MarioPillar = std::make_shared<Mario>(MarioPillar);
-    m_MarioPillar->SetInterval(100);
-    m_MarioPillar->SetZIndex(50);
-    m_MarioPillar->SetVisible(false);
-    m_MarioPillar->SetLooping(true);
-    m_MarioPillar->SetPlaying();
-    app->m_Root.AddChild(m_MarioPillar);
-
     MarioPillar2.reserve(2);
     MarioPillar2.emplace_back(GA_RESOURCE_DIR"/Mario/mario1_end1.png");
     MarioPillar2.emplace_back(GA_RESOURCE_DIR"/Mario/mario1_end.png");
@@ -217,7 +264,7 @@ void FirstWorldTwo::StartLevel2(App *app) {
         Mushroom1.emplace_back(GA_RESOURCE_DIR"/images/goombas_"+std::to_string(i)+".png");
     }
 
-    for(int i=0;i<14;i++){
+    for(int i=0;i<13;i++){
         m_Mushroom = std::make_shared<Mushroom>(Mushroom1);
         m_Mushroom->SetLooping(true);
         m_Mushroom->SetPlaying();
@@ -246,8 +293,9 @@ void FirstWorldTwo::StartLevel2(App *app) {
     m_MushVector[10]->SetPosition({3997.0f,-76.0f});
     m_MushVector[11]->SetPosition({4045.0f,-44.0f});
 
-    m_MushVector[12]->SetPosition({5267.0f,-172.0f});
-    m_MushVector[13]->SetPosition({5315.0f,-172.0f});
+    m_MushVector[12]->SetPosition({3235.0f,-172.0f});
+
+
 
 
     //koopa
@@ -268,7 +316,7 @@ void FirstWorldTwo::StartLevel2(App *app) {
     }
 
     m_KoopaVec[0]->SetPosition({1055.0f,-169.0f});
-    m_KoopaVec[1]->SetPosition({1087.0f,-169.0f});
+    m_KoopaVec[1]->SetPosition({1119.0f,-169.0f});
 
     m_KoopaVec[2]->SetPosition({1567.0f,-169.0f});
 
@@ -291,9 +339,9 @@ void FirstWorldTwo::StartLevel2(App *app) {
     m_Land[4]->SetPosition({4468.0f,-220.0f});
     m_Land[5]->SetPosition({5044.0f,-220.0f});
 
+
     //In Air Tile
     //Question Mark
-
     QuestionMark.reserve(3);
     for(int i = 0;i < 3; i++){
         QuestionMark.emplace_back(GA_RESOURCE_DIR"/images/question"+std::to_string(i)+".png");
@@ -323,8 +371,8 @@ void FirstWorldTwo::StartLevel2(App *app) {
 
 
 
-    //dead brick
-    for(int i=0;i<14;i++) {
+    //dead ques
+    for(int i=0;i<5;i++) {
         m_DeadQues.push_back(std::make_shared<Character>(GA_RESOURCE_DIR"/images/deadQues.png"));
         m_DeadQues[i]->SetZIndex(5);
         m_DeadQues[i]->SetVisible(false);
@@ -332,9 +380,9 @@ void FirstWorldTwo::StartLevel2(App *app) {
     }
 
     //brick
-    for(int i = 0;i<255;i++){
+    for(int i = 0;i<263;i++){
         m_Brick.push_back(std::make_shared<Brick>(GA_RESOURCE_DIR"/images/tilesWorld2_1.png"));
-        m_Brick[i]->SetZIndex(5);
+        m_Brick[i]->SetZIndex(10);
         m_Brick[i]->SetVisible(false);
         app->m_Root.AddChild(m_Brick[i]);
     }
@@ -443,91 +491,97 @@ void FirstWorldTwo::StartLevel2(App *app) {
 
     m_Brick[78]->SetPosition({2515.0f,-74.0f});
     m_Brick[79]->SetPosition({2515.0f,-42.0f});
-    //on the ground no need to give brick_break
-    m_Brick[80]->SetPosition({3581.0f,-172.0f});
-    m_Brick[81]->SetPosition({3581.0f,-140.0f});
-    m_Brick[82]->SetPosition({3581.0f,-108.0f});
 
-    m_Brick[83]->SetPosition({3613.0f,-172.0f});
-    m_Brick[84]->SetPosition({3613.0f,-140.0f});
-    m_Brick[85]->SetPosition({3613.0f,-108.0f});
-    //
 
-    m_Brick[86]->SetPosition({4356.0f,-106.0f});
-    m_Brick[87]->SetPosition({4388.0f,-106.0f});
-    m_Brick[88]->SetPosition({4420.0f,-106.0f});
-    m_Brick[89]->SetPosition({4452.0f,-106.0f});
-    m_Brick[90]->SetPosition({4484.0f,-106.0f});
-    m_Brick[91]->SetPosition({4516.0f,-106.0f});
+    m_Brick[80]->SetPosition({4356.0f,-106.0f});
+    m_Brick[81]->SetPosition({4388.0f,-106.0f});
+    m_Brick[82]->SetPosition({4420.0f,-106.0f});
+    m_Brick[83]->SetPosition({4452.0f,-106.0f});
+    m_Brick[84]->SetPosition({4484.0f,-106.0f});
+    m_Brick[85]->SetPosition({4516.0f,-106.0f});
 
     //connecting the upper brick
     for(int i=0;i<2;i++){
-        m_Brick[92+i]->SetPosition({1375.0f,86.0f+(32.0f*i)});
+        m_Brick[86+i]->SetPosition({1375.0f,86.0f+(32.0f*i)});
     }
     for(int i=0;i<2;i++){
-        m_Brick[94+i]->SetPosition({1407.0f,86.0f+(32.0f*i)});
+        m_Brick[88+i]->SetPosition({1407.0f,86.0f+(32.0f*i)});
     }
 
     for(int i=0;i<2;i++){
-        m_Brick[96+i]->SetPosition({1535.0f,86.0f+(32.0f*i)});
+        m_Brick[90+i]->SetPosition({1535.0f,86.0f+(32.0f*i)});
     }
     for(int i=0;i<2;i++){
-        m_Brick[98+i]->SetPosition({1567.0f,86.0f+(32.0f*i)});
+        m_Brick[92+i]->SetPosition({1567.0f,86.0f+(32.0f*i)});
     }
     for(int i=0;i<2;i++){
-        m_Brick[100+i]->SetPosition({1599.0f,86.0f+(32.0f*i)});
+        m_Brick[94+i]->SetPosition({1599.0f,86.0f+(32.0f*i)});
     }
     for(int i=0;i<2;i++){
-        m_Brick[102+i]->SetPosition({1631.0f,86.0f+(32.0f*i)});
+        m_Brick[96+i]->SetPosition({1631.0f,86.0f+(32.0f*i)});
     }
     for(int i=0;i<2;i++){
-        m_Brick[104+i]->SetPosition({1663.0f,86.0f+(32.0f*i)});
+        m_Brick[98+i]->SetPosition({1663.0f,86.0f+(32.0f*i)});
     }
     for(int i=0;i<2;i++){
-        m_Brick[106+i]->SetPosition({1695.0f,86.0f+(32.0f*i)});
+        m_Brick[100+i]->SetPosition({1695.0f,86.0f+(32.0f*i)});
     }
     for(int i=0;i<2;i++){
-        m_Brick[108+i]->SetPosition({1791.0f,86.0f+(32.0f*i)});
+        m_Brick[102+i]->SetPosition({1791.0f,86.0f+(32.0f*i)});
     }
     for(int i=0;i<2;i++){
-        m_Brick[110+i]->SetPosition({1823.0f,86.0f+(32.0f*i)});
+        m_Brick[104+i]->SetPosition({1823.0f,86.0f+(32.0f*i)});
     }
     for(int i=0;i<2;i++){
-        m_Brick[112+i]->SetPosition({1855.0f,86.0f+(32.0f*i)});
+        m_Brick[106+i]->SetPosition({1855.0f,86.0f+(32.0f*i)});
     }
     for(int i=0;i<2;i++){
-        m_Brick[114+i]->SetPosition({1887.0f,86.0f+(32.0f*i)});
+        m_Brick[108+i]->SetPosition({1887.0f,86.0f+(32.0f*i)});
     }
     for(int i=0;i<2;i++){
-        m_Brick[116+i]->SetPosition({2111.0f,86.0f+(32.0f*i)});
+        m_Brick[110+i]->SetPosition({2111.0f,86.0f+(32.0f*i)});
     }
     for(int i=0;i<2;i++){
-        m_Brick[118+i]->SetPosition({2143.0f,86.0f+(32.0f*i)});
+        m_Brick[112+i]->SetPosition({2143.0f,86.0f+(32.0f*i)});
     }
     for(int i=0;i<2;i++){
-        m_Brick[120+i]->SetPosition({2175.0f,86.0f+(32.0f*i)});
+        m_Brick[114+i]->SetPosition({2175.0f,86.0f+(32.0f*i)});
     }
 
     //upper brick
     for(int i=0;i<133;i++){
-        m_Brick[122+i]->SetPosition({-160.0f+(32.0f*i),150.0f});
+        m_Brick[116+i]->SetPosition({-160.0f+(32.0f*i),150.0f});
+    }
+    for(int i=0;i<7;i++){
+        m_Brick[249+i]->SetPosition({4868.0f+(32.0f*i),150.0f});
     }
 
-    //m_Brick[255]->SetPosition({5044.0f,})
+    m_Brick[256]->SetPosition({5044.0f,-156.0f});
+    m_Brick[256]->SetImage(GA_RESOURCE_DIR"/images/bigBricks.png");
+
+    //on the ground no need to give brick_break
+    m_Brick[257]->SetPosition({3581.0f,-172.0f});
+    m_Brick[258]->SetPosition({3581.0f,-140.0f});
+    m_Brick[259]->SetPosition({3581.0f,-108.0f});
+
+    m_Brick[260]->SetPosition({3613.0f,-172.0f});
+    m_Brick[261]->SetPosition({3613.0f,-140.0f});
+    m_Brick[262]->SetPosition({3613.0f,-108.0f});
+
 
     //brick_break
     //should be adjusted
-    m_Brick_break.resize(261);
-    for (int i = 0; i < 261; ++i) {
+    m_Brick_break.resize(256);
+    for (int i = 0; i < 256; ++i) {
         m_Brick_break[i].resize(5);
     }
-    for(int i = 0;i<261;i++){
+    for(int i = 0;i<256;i++){
         for (int x =0 ; x<5 ;x++) {
-            const auto BrickBreak = std::make_shared<Brick>(GA_RESOURCE_DIR"/images/block_debris0.png");
-            BrickBreak->SetZIndex(100);
-            BrickBreak->SetVisible(false);
-            app->m_Root.AddChild(BrickBreak);
-            m_Brick_break[i][x] = BrickBreak;
+            m_BrickBreak = std::make_shared<Brick>(GA_RESOURCE_DIR"/images/block_debris1.png");
+            m_BrickBreak->SetZIndex(100);
+            m_BrickBreak->SetVisible(false);
+            app->m_Root.AddChild(m_BrickBreak);
+            m_Brick_break[i][x] = m_BrickBreak;
 
         }
     }
@@ -646,70 +700,77 @@ void FirstWorldTwo::StartLevel2(App *app) {
         m_Brick_break[84][i]->SetPosition({4484.0f, -106.0f});
         m_Brick_break[85][i]->SetPosition({4516.0f, -106.0f});
 
-        for(int j=0;j<5;j++){
+        for(int j=0;j<2;j++){
             m_Brick_break[86+j][i]->SetPosition({1375.0f, 86.0f+(32.0f*j)});
         }
-        for(int j=0;j<5;j++){
-            m_Brick_break[91+j][i]->SetPosition({1407.0f, 86.0f+(32.0f*j)});
+        for(int j=0;j<2;j++){
+            m_Brick_break[88+j][i]->SetPosition({1407.0f, 86.0f+(32.0f*j)});
         }
-        for(int j=0;j<5;j++){
-            m_Brick_break[96+j][i]->SetPosition({1535.0f, 86.0f+(32.0f*j)});
+        for(int j=0;j<2;j++){
+            m_Brick_break[90+j][i]->SetPosition({1535.0f, 86.0f+(32.0f*j)});
         }
-        for(int j=0;j<5;j++){
-            m_Brick_break[101+j][i]->SetPosition({1567.0f, 86.0f+(32.0f*j)});
+        for(int j=0;j<2;j++){
+            m_Brick_break[92+j][i]->SetPosition({1567.0f, 86.0f+(32.0f*j)});
         }
-        for(int j=0;j<5;j++){
-            m_Brick_break[106+j][i]->SetPosition({1599.0f, 86.0f+(32.0f*j)});
+        for(int j=0;j<2;j++){
+            m_Brick_break[94+j][i]->SetPosition({1599.0f, 86.0f+(32.0f*j)});
         }
-        for(int j=0;j<5;j++){
-            m_Brick_break[111+j][i]->SetPosition({1631.0f, 86.0f+(32.0f*j)});
+        for(int j=0;j<2;j++){
+            m_Brick_break[96+j][i]->SetPosition({1631.0f, 86.0f+(32.0f*j)});
         }
-        for(int j=0;j<5;j++){
-            m_Brick_break[116+j][i]->SetPosition({1663.0f, 86.0f+(32.0f*j)});
+        for(int j=0;j<2;j++){
+            m_Brick_break[98+j][i]->SetPosition({1663.0f, 86.0f+(32.0f*j)});
         }
-        for(int j=0;j<5;j++){
-            m_Brick_break[121+j][i]->SetPosition({1695.0f, 86.0f+(32.0f*j)});
+        for(int j=0;j<2;j++){
+            m_Brick_break[100+j][i]->SetPosition({1695.0f, 86.0f+(32.0f*j)});
         }
-        for(int j=0;j<5;j++){
-            m_Brick_break[126+j][i]->SetPosition({1791.0f, 86.0f+(32.0f*j)});
+        for(int j=0;j<2;j++){
+            m_Brick_break[102+j][i]->SetPosition({1791.0f, 86.0f+(32.0f*j)});
         }
-        for(int j=0;j<5;j++){
-            m_Brick_break[131+j][i]->SetPosition({1823.0f, 86.0f+(32.0f*j)});
+        for(int j=0;j<2;j++){
+            m_Brick_break[104+j][i]->SetPosition({1823.0f, 86.0f+(32.0f*j)});
         }
-        for(int j=0;j<5;j++){
-            m_Brick_break[136+j][i]->SetPosition({1855.0f, 86.0f+(32.0f*j)});
+        for(int j=0;j<2;j++){
+            m_Brick_break[106+j][i]->SetPosition({1855.0f, 86.0f+(32.0f*j)});
         }
-        for(int j=0;j<5;j++){
-            m_Brick_break[141+j][i]->SetPosition({1887.0f, 86.0f+(32.0f*j)});
+        for(int j=0;j<2;j++){
+            m_Brick_break[108+j][i]->SetPosition({1887.0f, 86.0f+(32.0f*j)});
         }
-        for(int j=0;j<5;j++){
-            m_Brick_break[146+j][i]->SetPosition({2111.0f, 86.0f+(32.0f*j)});
+        for(int j=0;j<2;j++){
+            m_Brick_break[110+j][i]->SetPosition({2111.0f, 86.0f+(32.0f*j)});
         }
-        for(int j=0;j<5;j++){
-            m_Brick_break[151+j][i]->SetPosition({2143.0f, 86.0f+(32.0f*j)});
+        for(int j=0;j<2;j++){
+            m_Brick_break[112+j][i]->SetPosition({2143.0f, 86.0f+(32.0f*j)});
         }
-        for(int j=0;j<5;j++){
-            m_Brick_break[156+j][i]->SetPosition({2175.0f, 86.0f+(32.0f*j)});
+        for(int j=0;j<2;j++){
+            m_Brick_break[114+j][i]->SetPosition({2175.0f, 86.0f+(32.0f*j)});
+        }
+        //upper brick
+        for(int j=0;j<133;j++){
+            m_Brick_break[116+j][i]->SetPosition({-160.0f+(32.0f*j),150.0f});
         }
 
-        for(int j=0;j<100;j++){
-            m_Brick_break[161+j][i]->SetPosition({-160.0f+(32.0f*j),246.0f});
+        for(int j=0;j<7;j++){
+            m_Brick_break[249+j][i]->SetPosition({4868.0f+(32.0f*j),150.0f});
         }
     }
 
 
     //brick move
-    m_BrickMove = std::make_shared<Character>(GA_RESOURCE_DIR"/images/tilesWorld2_1.png");
-    m_BrickMove->SetZIndex(5);
-    m_BrickMove->SetPosition({-1000.0f,-1000.0f});
-    m_BrickMove->SetVisible(false);
-    app->m_Root.AddChild(m_BrickMove);
+    for(int i=0;i<256;i++){
+        m_BrickMove.push_back(std::make_shared<Character>(GA_RESOURCE_DIR"/images/inAir1.png"));
+        m_BrickMove[i]->SetZIndex(5);
+        m_BrickMove[i]->SetVisible(false);
+        m_BrickMove[i]->SetPosition({-1000.0f,-1000.0f});
+        app->m_Root.AddChild(m_BrickMove[i]);
+    }
+
 
     //Tube
     for(int i=0;i<3;i++){
         m_Tube.push_back(std::make_shared<Character>(GA_RESOURCE_DIR"/images/tube.png"));
-        m_Tube[i]->SetZIndex(4);
-        m_Tube[i]->SetVisible(false);
+        m_Tube[i]->SetZIndex(5);
+        m_Tube[i]->SetVisible(true);
 
     }
     m_Tube[0]->SetPosition({2979.0f,-350.0f});
@@ -717,9 +778,30 @@ void FirstWorldTwo::StartLevel2(App *app) {
     m_Tube[2]->SetPosition({3363.0f,-380.0f});
 
 
+
     for(int i=0;i<3;i++){
         app->m_Root.AddChild(m_Tube[i]);
     }
+
+    //big tube
+    m_TubeBig = std::make_shared<Character>(GA_RESOURCE_DIR"/images/tubeBig2.png");
+    m_TubeBig->SetPosition({5044.0f,35.0f});
+    m_TubeBig->SetZIndex(100);
+    m_TubeBig->SetVisible(true);
+    app->m_Root.AddChild(m_TubeBig);
+
+    //big tube2
+    for(int i=0;i<2;i++){
+        LOG_DEBUG("msk bigtube2");
+        m_TubeBig2 = std::make_shared<Character>(GA_RESOURCE_DIR"/images/tubeBig"+std::to_string(i+3)+".png");
+
+        m_TubeBig2Vec.push_back(m_TubeBig2);
+        m_TubeBig2Vec[i]->SetZIndex(8);
+        m_TubeBig2Vec[i]->SetVisible(false);
+        app->m_Root.AddChild(m_TubeBig2Vec[i]);
+    }
+    m_TubeBig2Vec[0]->SetPosition({5076.0f,35.0f});
+    m_TubeBig2Vec[1]->SetPosition({5076.0f,-74.0f});
 
     //wood
     for(int i=0;i<13;i++){
@@ -767,28 +849,6 @@ void FirstWorldTwo::StartLevel2(App *app) {
         app->m_Root.AddChild(m_Wood[i]);
     }
 
-    //pillar and flag
-    m_Pillar = std::make_shared<Character>(GA_RESOURCE_DIR"/images/flag_pillar.png");
-    m_Pillar->SetZIndex(4);
-    m_Pillar->SetVisible(false);
-    m_Pillar->SetPosition({6035.0f,-6.0f});
-    app->m_Root.AddChild(m_Pillar);
-
-    m_Flag = std::make_shared<Character>(GA_RESOURCE_DIR"/images/flag.png");
-    m_Flag->SetZIndex(4);
-    m_Flag->SetVisible(false);
-    m_Flag->SetPosition({6019.0f,110.0f});
-    app->m_Root.AddChild(m_Flag);
-
-    //castle
-    for(int i = 0; i < 2; i++){
-        m_Castle.push_back(std::make_shared<Character>(GA_RESOURCE_DIR"/images/blackCastle.png"));
-        m_Castle[i]->SetZIndex(100);
-        m_Castle[i]->SetVisible(false);
-        m_Castle[i]->SetPosition({6547.0f,-172.0f + (i*32.0f)});
-        app->m_Root.AddChild(m_Castle[i]);
-    }
-
     //moving Platform
     for(int i=0;i<4;i++){
         m_MovingPlatform.push_back(std::make_shared<Character>(GA_RESOURCE_DIR"/images/movingPlatform.png"));
@@ -807,10 +867,10 @@ void FirstWorldTwo::StartLevel2(App *app) {
         m_MovingPlatform2[i]->SetVisible(false);
         app->m_Root.AddChild(m_MovingPlatform2[i]);
     }
-    m_MovingPlatform2[0]->SetPosition({4660.0f,-300.0f});
-    m_MovingPlatform2[1]->SetPosition({4660.0f,0.0f});
-    m_MovingPlatform2[2]->SetPosition({4660.0f,-900.0f});
-    m_MovingPlatform2[3]->SetPosition({4660.0f,-600.0f});
+    m_MovingPlatform2[0]->SetPosition({4676.0f,-300.0f});
+    m_MovingPlatform2[1]->SetPosition({4676.0f,0.0f});
+    m_MovingPlatform2[2]->SetPosition({4676.0f,-900.0f});
+    m_MovingPlatform2[3]->SetPosition({4676.0f,-600.0f});
 
     /*
     m_PRM = std::make_shared<PhaseResourcesManager>();
@@ -822,15 +882,16 @@ void FirstWorldTwo::StartLevel2(App *app) {
     for(int i = 0 ; i < 3 ; i++){
         Coins.emplace_back(GA_RESOURCE_DIR"/images/coin_an"+std::to_string(i)+".png");
     }
-
-    m_Coins = std::make_shared<AnimatedCharacter>(Coins);
-    m_Coins->SetInterval(100);
-    m_Coins->SetZIndex(3);
-    m_Coins->SetVisible(false);
-    m_Coins->SetLooping(true);
-    m_Coins->SetPlaying();
-    m_Coins->SetPosition({-1000.0f,-1000.0f});
-    app->m_Root.AddChild(m_Coins);
+    for(int i=0;i<14;i++){
+        m_Coins.push_back(std::make_shared<AnimatedCharacter>(Coins));
+        m_Coins[i]->SetInterval(100);
+        m_Coins[i]->SetZIndex(3);
+        m_Coins[i]->SetVisible(false);
+        m_Coins[i]->SetLooping(true);
+        m_Coins[i]->SetPlaying();
+        m_Coins[i]->SetPosition({-1000.0f,-1000.0f});
+        app->m_Root.AddChild(m_Coins[i]);
+    }
 
 
     //coins2
@@ -913,19 +974,93 @@ void FirstWorldTwo::StartLevel2(App *app) {
     levelUpBack.emplace_back(GA_RESOURCE_DIR"/Mario/mario_lvlupBack.png");
     levelUpBack.emplace_back(GA_RESOURCE_DIR"/Mario/mario1Back.png");
 
-    MarioRunLvl2.reserve(5);
-    MarioRunLvl2.emplace_back(GA_RESOURCE_DIR"/Mario/mario1.png");
-    for(int i=0;i<3;i++){
-        MarioRunLvl2.emplace_back(GA_RESOURCE_DIR"/Mario/mario1_move"+std::to_string(i)+".png");
-    }
-    MarioRunLvl2.emplace_back(GA_RESOURCE_DIR"/Mario/mario1.png");
-
     MarioRunBackLvl2.reserve(5);
     MarioRunBackLvl2.emplace_back(GA_RESOURCE_DIR"/Mario/mario1Back.png");
     for(int i=0;i<3;i++){
         MarioRunBackLvl2.emplace_back(GA_RESOURCE_DIR"/Mario/mario1_move"+std::to_string(i)+"Back.png");
     }
     MarioRunBackLvl2.emplace_back(GA_RESOURCE_DIR"/Mario/mario1Back.png");
+
+    SetState(State::UPDATE);
+
+}
+
+void FirstWorldTwo::Finish(App *app) {
+    app->m_Root.RemoveAllChildren();
+    //deleting all things left
+    m_Bg2 = nullptr;
+    m_TubeBig2Vec[0]->SetPosition({-1000.0f,-1000.0f});
+    m_TubeBig2Vec[1]->SetPosition({-1000.0f,-1000.0f});
+    m_TubeBig->SetPosition({-1000.0f,1000.0f});
+    m_Brick[261]->SetPosition({-1000.0f,-1000.0f});
+    m_Land[5]->SetPosition({-1000.0f,-1000.0f});
+    m_Land[4]->SetPosition({-1000.0f,-1000.0f});
+    m_Brick.clear();
+    m_MovingPlatform2.clear();
+
+    m_Bg2 = std::make_shared<Character>(GA_RESOURCE_DIR"/Background/PhaseFinish.png");
+    m_Bg2->SetZIndex(2);
+    m_Bg2->SetPosition({300.0f,0.0f});
+    app->m_Root.AddChild(m_Bg2);
+
+    m_Land2 = std::make_shared<Character>(GA_RESOURCE_DIR"/images/tileLongFinish.png");
+    m_Land2->SetZIndex(100);
+    m_Land2->SetPosition({300.0f,-220.0f});
+    app->m_Root.AddChild(m_Land2);
+
+    m_Mario->SetPosition({-255.0f,-130.0f});
+    app->m_Root.AddChild(m_Mario);
+
+    m_Tube.push_back(std::make_shared<Character>(GA_RESOURCE_DIR"/images/tube.png"));
+    m_Tube[3]->SetZIndex(80);
+    m_Tube[3]->SetVisible(true);
+    m_Tube[3]->SetPosition({-255.0f,-370.0f});
+    app->m_Root.AddChild(m_Tube[3]);
+
+    for(int i=13;i<22;i++){
+        m_Wood.push_back(std::make_shared<Character>(GA_RESOURCE_DIR"/images/wood.png"));
+        m_Wood[i]->SetZIndex(4);
+        m_Wood[i]->SetVisible(false);
+        app->m_Root.AddChild(m_Wood[i]);
+    }
+    m_Wood[13]->SetPosition({-207.0f,-172.0f});
+    m_Wood[14]->SetPosition({-175.0f,-140.0f});
+    m_Wood[15]->SetPosition({-143.0f,-108.0f});
+    m_Wood[16]->SetPosition({-111.0f,-76.0f});
+    m_Wood[17]->SetPosition({-79.0f,-44.0f});
+    m_Wood[18]->SetPosition({-47.0f,-12.0f});
+    m_Wood[19]->SetPosition({-15.0f,20.0f});
+    m_Wood[20]->SetPosition({33.0f,-60.0f});
+    m_Wood[20]->SetImage(GA_RESOURCE_DIR"/images/woodBig4.png");
+
+    m_Wood[21]->SetPosition({350.0f,-172.0f});
+    m_Wood[21]->SetVisible(true);
+
+    //pillar and flag
+    m_Pillar = std::make_shared<Character>(GA_RESOURCE_DIR"/images/flag_pillar.png");
+    m_Pillar->SetZIndex(4);
+    m_Pillar->SetVisible(false);
+    m_Pillar->SetPosition({350.0f,-6.0f});
+    app->m_Root.AddChild(m_Pillar);
+
+    m_Flag = std::make_shared<Character>(GA_RESOURCE_DIR"/images/flag.png");
+    m_Flag->SetZIndex(4);
+    m_Flag->SetVisible(false);
+    m_Flag->SetPosition({334.0f,110.0f});
+    app->m_Root.AddChild(m_Flag);
+
+    //castle
+    for(int i = 0; i < 2; i++){
+        m_Castle.push_back(std::make_shared<Character>(GA_RESOURCE_DIR"/images/blackCastle.png"));
+        m_Castle[i]->SetZIndex(100);
+        m_Castle[i]->SetVisible(true);
+        m_Castle[i]->SetPosition({590.0f,-172.0f + (i*32.0f)});
+        app->m_Root.AddChild(m_Castle[i]);
+    }
+
+    m_Mario->MarioGoUp = false;
+    FinishLevel = true;
+    marioFromTube = true;
 
     SetState(State::UPDATE);
 

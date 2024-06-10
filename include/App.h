@@ -10,7 +10,6 @@
 #include "Util/Text.hpp"
 #include "AnimatedCharacter.h"
 #include "PhaseResourcesManager.h"
-#include "MarioJump.h"
 #include "Util/SFX.hpp"
 #include "Util/BGM.hpp"
 #include "QuestionTiles.h"
@@ -48,6 +47,8 @@ public:
 
 
     Phases m_Phase = Phases::MENU;
+
+    int MarioLevel = 0;
 
 };
 

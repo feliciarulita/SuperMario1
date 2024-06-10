@@ -24,10 +24,10 @@ void App::ChangePhase(Phases phase) {
         std::cout<<"success change to beginning"<<std::endl;
     }
     else if(phase == Phases::FIRST_WORLD_ONE){
-        m_CurrentPhase = std::make_shared<FirstWorldOne>();
+        m_CurrentPhase = std::make_shared<FirstWorldOne>(MarioLevel);
     }
     else if(phase == Phases::FIRST_WORLD_TWO){
-        m_CurrentPhase = std::make_shared<FirstWorldTwo>();
+        m_CurrentPhase = std::make_shared<FirstWorldTwo>(MarioLevel);
         std::cout<<"success change to world two"<<std::endl;
     }
 
@@ -52,6 +52,10 @@ void App::Update(){
         else if(m_CurrentPhase->GetCurrentState() == Phase::State::STARTLEVEL2){
             std::cout<<"level2"<<std::endl;
             m_CurrentPhase->StartLevel2(this);
+        }
+        else if(m_CurrentPhase->GetCurrentState() == Phase::State::FINISH){
+            std::cout<<"finish state"<<std::endl;
+            m_CurrentPhase->Finish(this);
         }
     }
 }
