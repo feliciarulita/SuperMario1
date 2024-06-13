@@ -40,24 +40,7 @@ public:
         }
         return {false, -1};
     }
-    template<typename T>
-    std::tuple<bool,int> IsHeading(std::vector<std::shared_ptr<T>>Objects){
-        for(int i=0;i<Objects.size();i++){
-            //debugging
-            auto tiles = Objects[i];
-            bool collideX1 = (GetPosition().x - GetScaledSize().x/2>=tiles->GetPosition().x-tiles->GetScaledSize().x/2)&&(GetPosition().x - GetScaledSize().x/2<=tiles->GetPosition().x+tiles->GetScaledSize().x/2-5.0f);
-            bool collideX2 = (GetPosition().x + GetScaledSize().x/2>=tiles->GetPosition().x-tiles->GetScaledSize().x/2+5.0f)&&(GetPosition().x + GetScaledSize().x/2<=tiles->GetPosition().x+tiles->GetScaledSize().x/2);
-            bool collideY = (GetPosition().y + GetScaledSize().y/2<(tiles->GetPosition().y+tiles->GetScaledSize().y/2) && GetPosition().y+GetScaledSize().y/2>tiles->GetPosition().y-tiles->GetScaledSize().y/2);
 
-            bool collideX = collideX1 || collideX2;
-
-            if(collideX && collideY){
-                return {true,i};
-            }
-
-        }
-        return {false,-1};
-    }
     template<typename T>
     bool IsCollideRight(std::vector<std::shared_ptr<T>> Object ){
         for(int i=0;i<Object.size();i++){
@@ -224,6 +207,7 @@ public:
     float PowerJump = 0.0f;
 
     int level = 0;
+    int KillEnemy_in_a_row=0;
 
     //mushroom, coins
     bool isActive = false;

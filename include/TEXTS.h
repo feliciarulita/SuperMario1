@@ -42,9 +42,15 @@ public:
         temp->SetText(append_string_views(s_PhaseTasks[phase], s_Validation));
     }
 */
+    [[nodiscard]] const glm::vec2& GetPosition() const { return m_Transform.translation; }
+
+    [[nodiscard]] bool GetVisibility() const { return m_Visible; }
+
     void SetPosition(const glm::vec2& Position) { m_Transform.translation = Position; }
 
     void SetText(const std::string& text);
+
+    float timer = 0.0f;
 
 
 

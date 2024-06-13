@@ -22,11 +22,13 @@ void FirstWorldOne::Start(App *app){
     m_Mario_stomp_audio = std::make_unique<Util::SFX>(GA_RESOURCE_DIR"/Audio/sound_effects/enemy-stomp.wav");
     m_Mario_bump_audio = std::make_unique<Util::SFX>(GA_RESOURCE_DIR"/Audio/sound_effects/bump.wav");
     m_Mario_levelFinish_audio = std::make_unique<Util::SFX>(GA_RESOURCE_DIR"/Audio/sound_effects/level-clear.wav");
+    m_Brick_Break_audio =std::make_unique<Util::SFX>(GA_RESOURCE_DIR"/Audio/sound_effects/brick-smash.wav");
+    PowerUP_audio = std::make_unique<Util::SFX>(GA_RESOURCE_DIR"/Audio/sound_effects/powerup.wav");
     //not implemented yet
     m_Mario_flagpole_audio = std::make_unique<Util::SFX>(GA_RESOURCE_DIR"/Audio/sound_effects/flagpole.wav");
 
     //text
-    m_title =std::make_shared<TEXTS>( "SCORE                 COINS                 WORLD               TIME") ;
+    m_title =std::make_shared<TEXTS>( "SCORE            COINS             WORLD             TIME           LIVE") ;
     m_title->SetZIndex(100);
     m_title ->SetVisible(true);
     m_title->SetPosition({0.0f,230.0f});
@@ -35,32 +37,59 @@ void FirstWorldOne::Start(App *app){
     m_score =std::make_shared<TEXTS>( "0") ;
     m_score->SetZIndex(100);
     m_score ->SetVisible(true);
-    m_score->SetPosition({-250.0f,200.0f});
+    m_score->SetPosition({-280.0f,200.0f});
     app->m_Root.AddChild(m_score);
 
     m_coin =std::make_shared<TEXTS>( "0") ;
     m_coin->SetZIndex(100);
     m_coin ->SetVisible(true);
-    m_coin->SetPosition({-80.0f,200.0f});
+    m_coin->SetPosition({-130.0f,200.0f});
     app->m_Root.AddChild(m_coin);
 
     m_world =std::make_shared<TEXTS>( "1-1") ;
     m_world->SetZIndex(100);
     m_world ->SetVisible(true);
-    m_world->SetPosition({110.0f,200.0f});
+    m_world->SetPosition({25.0f,200.0f});
     app->m_Root.AddChild(m_world);
 
     m_time =std::make_shared<TEXTS>( "0") ;
     m_time->SetZIndex(100);
     m_time ->SetVisible(true);
-    m_time->SetPosition({270.0f,200.0f});
+    m_time->SetPosition({180.0f,200.0f});
     app->m_Root.AddChild(m_time);
 
-    m_popup =std::make_shared<TEXTS>( "100") ;
-    m_popup->SetZIndex(100);
-    m_popup ->SetVisible(false);
-    m_popup->SetPosition({0.0f,0.0f});
-    app->m_Root.AddChild(m_popup);
+    m_lives =std::make_shared<TEXTS>( "3") ;
+    m_lives->SetZIndex(100);
+    m_lives ->SetVisible(true);
+    m_lives->SetPosition({300.0f,200.0f});
+    app->m_Root.AddChild(m_lives);
+
+    m_popup1 =std::make_shared<TEXTS>( "100") ;
+    m_popup1->SetZIndex(100);
+    m_popup1 ->SetVisible(false);
+    m_popup1->SetPosition({0.0f,0.0f});
+    app->m_Root.AddChild(m_popup1);
+    m_popup2 =std::make_shared<TEXTS>( "200") ;
+    m_popup2->SetZIndex(100);
+    m_popup2 ->SetVisible(false);
+    m_popup2->SetPosition({0.0f,0.0f});
+    app->m_Root.AddChild(m_popup2);
+    m_popup3 =std::make_shared<TEXTS>( "300") ;
+    m_popup3->SetZIndex(100);
+    m_popup3 ->SetVisible(false);
+    m_popup3->SetPosition({0.0f,0.0f});
+    app->m_Root.AddChild(m_popup3);
+    m_popup4 =std::make_shared<TEXTS>( "400") ;
+    m_popup4->SetZIndex(100);
+    m_popup4 ->SetVisible(false);
+    m_popup4->SetPosition({0.0f,0.0f});
+    app->m_Root.AddChild(m_popup4);
+    m_popup_lvlup_score =std::make_shared<TEXTS>( "1000") ;
+    m_popup_lvlup_score->SetZIndex(100);
+    m_popup_lvlup_score ->SetVisible(false);
+    m_popup_lvlup_score->SetPosition({0.0f,0.0f});
+    app->m_Root.AddChild(m_popup_lvlup_score);
+
 
     //BGM
     m_BGMusic = std::make_unique<Util::BGM>(GA_RESOURCE_DIR"/Audio/BGMusic.mp3");
@@ -136,6 +165,8 @@ void FirstWorldOne::Start(App *app){
     m_Mario->SetVisible(true);
     app->m_Root.AddChild(m_Mario);
 
+    app->MarioLevel = 0;
+
     //Mario run backward
     MarioRunBack.reserve(5);
     MarioRunBack.emplace_back(GA_RESOURCE_DIR"/Mario/marioBack.png");
@@ -169,6 +200,18 @@ void FirstWorldOne::Start(App *app){
     }
     for(int i=0;i<36;i++){
         MarioShrink.emplace_back(GA_RESOURCE_DIR"/Mario/mario.png");
+    }
+    //check
+    //mario shrink back
+    MarioShrinkBack.reserve(52);
+    for(int i=0;i<8;i++){
+        MarioShrinkBack.emplace_back(GA_RESOURCE_DIR"/Mario/MarioShrink1.png");
+    }
+    for(int i=0;i<8;i++){
+        MarioShrinkBack.emplace_back(GA_RESOURCE_DIR"/Mario/MarioShrink2.png");
+    }
+    for(int i=0;i<36;i++){
+        MarioShrinkBack.emplace_back(GA_RESOURCE_DIR"/Mario/marioBack.png");
     }
 
     //mushroom
@@ -213,6 +256,10 @@ void FirstWorldOne::Start(App *app){
         app->m_Root.AddChild(m_MushVector[i]);
     }
 
+    //dead mushroom 1 and 2
+    MushroomDead1 = GA_RESOURCE_DIR"/images/goombas_dead.png";
+    MushroomDead2 = GA_RESOURCE_DIR"/images/goombas_dead2.png";
+
     //koopa
     KoopaPic.reserve(2);
     for(int i = 0;i<2;i++){
@@ -235,6 +282,9 @@ void FirstWorldOne::Start(App *app){
     KoopaBack.reserve(2);
     KoopaBack.emplace_back(GA_RESOURCE_DIR"/images/koopa_0Back.png");
     KoopaBack.emplace_back(GA_RESOURCE_DIR"/images/koopa_1Back.png");
+
+    //koopa dead
+    KoopaDeadPic = GA_RESOURCE_DIR"/images/koopa_dead.png";
 
     //Background tiles
     for(int i = 0; i < 4; i++){
@@ -349,7 +399,7 @@ void FirstWorldOne::Start(App *app){
 
     //brick move
     for(int i=0;i<256;i++){
-        m_BrickMove.push_back(std::make_shared<Character>(GA_RESOURCE_DIR"/images/inAir1.png"));
+        m_BrickMove.push_back(std::make_shared<Brick>(GA_RESOURCE_DIR"/images/inAir1.png"));
         m_BrickMove[i]->SetZIndex(5);
         m_BrickMove[i]->SetVisible(false);
         m_BrickMove[i]->SetPosition({-1000.0f,-1000.0f});
@@ -506,12 +556,12 @@ void FirstWorldOne::Start(App *app){
      */
 
     //Coins
-    Coins.reserve(3);
+    CoinsPic.reserve(3);
     for(int i = 0 ; i < 3 ; i++){
-        Coins.emplace_back(GA_RESOURCE_DIR"/images/coin_an"+std::to_string(i)+".png");
+        CoinsPic.emplace_back(GA_RESOURCE_DIR"/images/coin_an"+std::to_string(i)+".png");
     }
     for(int i=0;i<14;i++){
-        m_Coins.push_back(std::make_shared<AnimatedCharacter>(Coins));
+        m_Coins.push_back(std::make_shared<Coins>(CoinsPic));
         m_Coins[i]->SetInterval(100);
         m_Coins[i]->SetZIndex(3);
         m_Coins[i]->SetVisible(false);

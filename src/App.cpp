@@ -57,6 +57,12 @@ void App::Update(){
             std::cout<<"finish state"<<std::endl;
             m_CurrentPhase->Finish(this);
         }
+        else if(m_CurrentPhase->GetCurrentState() == Phase::State::WINLEVEL){
+            m_CurrentPhase->WinLevel(this);
+        }
+        else if(m_CurrentPhase->GetCurrentState() == Phase::State::WINLEVEL2){
+            m_CurrentPhase->WinLevel2(this);
+        }
     }
 }
 

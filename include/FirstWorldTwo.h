@@ -28,6 +28,10 @@ public:
 
     void Finish(App *app) override;
 
+    void WinLevel(App *app) override;
+
+    void WinLevel2(App *app) override;
+
 };
 
 #endif //SUPERMARIO1_FIRSTWORLDTWO_H

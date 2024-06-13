@@ -34,7 +34,12 @@ void Phase::Restart(App *app) {
     m_coin = nullptr;
     m_world = nullptr;
     m_time = nullptr;
-    m_popup = nullptr;
+    m_lives= nullptr;
+    m_popup1 = nullptr;
+    m_popup2 = nullptr;
+    m_popup3 = nullptr;
+    m_popup4 = nullptr;
+    m_popup_lvlup_score = nullptr;
 
     m_Bg = nullptr;
 
@@ -45,11 +50,10 @@ void Phase::Restart(App *app) {
     m_Flag = nullptr;
     m_TubeBig = nullptr;
     m_TubeBig2 = nullptr;
+    m_Tube2 = nullptr;
 
     m_DeadQues.clear();
-    m_BrickMove.clear();
     m_Land.clear();
-    m_Brick.clear();
     m_Tube.clear();
     m_Wood.clear();
     m_Castle.clear();
@@ -57,8 +61,9 @@ void Phase::Restart(App *app) {
     m_MovingPlatform2.clear();
     m_TubeBig2Vec.clear();
     m_Brick_break.clear();
-    m_Coins.clear();
+
     m_Brick.clear();
+    m_BrickMove.clear();
 
     m_BrickBreak = nullptr;
 
@@ -66,11 +71,15 @@ void Phase::Restart(App *app) {
 
     m_KoopaVec.clear();
 
+    m_KoopaRed = nullptr;
+
     m_QuesVector.clear();
 
     m_Question = nullptr;
 
     m_MushVector.clear();
+
+    m_Piranhas.clear();
 
     m_Mario = nullptr;
     m_MarioPillar = nullptr;
@@ -80,10 +89,10 @@ void Phase::Restart(App *app) {
 
     m_YellowMush = nullptr;
 
-
     m_Coins2 = nullptr;
 
     m_Coins2Vec.clear();
+    m_Coins.clear();
 
     m_Koopa = nullptr;
 
@@ -104,7 +113,7 @@ void Phase::Restart(App *app) {
     MarioShrink.clear();
     Mushroom1.clear();
     QuestionMark.clear();
-    Coins.clear();
+    CoinsPic.clear();
     KoopaPic.clear();
     levelUp.clear();
     levelUpBack.clear();
@@ -118,7 +127,11 @@ void Phase::Restart(App *app) {
     MarioPillarEnd.clear();
     MarioPillarEnd2.clear();
     CoinsLvl2.clear();
+    KoopaPic.clear();
     KoopaBack.clear();
+    KoopaRed.clear();
+    KoopaRedBack.clear();
+    PiranhaPic.clear();
 
     index=0;
     index2=0;
@@ -128,7 +141,9 @@ void Phase::Restart(App *app) {
     countBlinkTime = 0;
     BlinkTime = 0;
     isBrick = 0;
-    MarioLevel = 0;
+    MarioComesOutTime = 0;
+    piranhaOutTime = 0;
+    koopaRedTime = 0;
 
     slideTime=0;
     SpeedInAir=0;
@@ -161,6 +176,8 @@ void Phase::Restart(App *app) {
     rightSlide = false;
     pressUp = false;
     marioStart = false;
+    FinishLevel = false;
+    marioFromTube = false;
 
 
 
@@ -181,5 +198,13 @@ void Phase::StartLevel2(App *app) {
 }
 
 void Phase::Finish(App *app) {
+    SetState(State::UPDATE);
+}
+
+void Phase::WinLevel(App *app) {
+    SetState(State::UPDATE);
+}
+
+void Phase::WinLevel2(App *app) {
     SetState(State::UPDATE);
 }

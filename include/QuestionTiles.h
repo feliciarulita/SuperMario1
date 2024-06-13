@@ -50,7 +50,10 @@ public:
     bool isHeaded = false;
     bool isActive = true;
     bool isMushInside = false;
+
     int indexMush;
+
+    unsigned long marioHeadTime = 0;
 
 private:
     void ResetPosition() { m_Transform.translation = {0, 0}; }
