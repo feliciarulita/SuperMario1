@@ -19,6 +19,8 @@
 #include "Koopa.h"
 #include "YellowMush.h"
 #include "Bricks.h"
+#include "Coins.h"
+#include "Piranha.h"
 
 class Phase;
 
@@ -44,7 +46,6 @@ public:
     Util::Root m_Root;
 
     std::shared_ptr<Phase> m_CurrentPhase = std::shared_ptr<Phase>();
-
 
     Phases m_Phase = Phases::MENU;
 

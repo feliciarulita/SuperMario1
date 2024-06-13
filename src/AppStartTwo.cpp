@@ -18,7 +18,6 @@ void FirstWorldTwo::Start(App *app) {
     app->m_Root.AddChild(m_Bg);
 
     //Mario run forward
-
     MarioRun.reserve(5);
     MarioRun.emplace_back(GA_RESOURCE_DIR"/Mario/mario.png");
     for(int i = 0; i < 3; i++){
@@ -50,7 +49,7 @@ void FirstWorldTwo::Start(App *app) {
     app->m_Root.AddChild(m_Mario);
 
     m_TubeBig = std::make_shared<Character>(GA_RESOURCE_DIR"/images/bigTube1.png");
-    m_TubeBig->SetPosition({103.0f,-110.0f});
+    m_TubeBig->SetPosition({103.0f,-112.0f});
     m_TubeBig->SetZIndex(100);
     m_TubeBig->SetVisible(true);
     app->m_Root.AddChild(m_TubeBig);
@@ -93,11 +92,13 @@ void FirstWorldTwo::StartLevel2(App *app) {
     m_Mario_stomp_audio = std::make_unique<Util::SFX>(GA_RESOURCE_DIR"/Audio/sound_effects/enemy-stomp.wav");
     m_Mario_bump_audio = std::make_unique<Util::SFX>(GA_RESOURCE_DIR"/Audio/sound_effects/bump.wav");
     m_Mario_levelFinish_audio = std::make_unique<Util::SFX>(GA_RESOURCE_DIR"/Audio/sound_effects/level-clear.wav");
+    m_Brick_Break_audio =std::make_unique<Util::SFX>(GA_RESOURCE_DIR"/Audio/sound_effects/brick-smash.wav");
+    PowerUP_audio = std::make_unique<Util::SFX>(GA_RESOURCE_DIR"/Audio/sound_effects/powerup.wav");
     //not implemented yet
     m_Mario_flagpole_audio = std::make_unique<Util::SFX>(GA_RESOURCE_DIR"/Audio/sound_effects/flagpole.wav");
 
     //text
-    m_title =std::make_shared<TEXTS>( "SCORE                 COINS                 WORLD               TIME") ;
+    m_title =std::make_shared<TEXTS>( "SCORE            COINS             WORLD             TIME           LIVE") ;
     m_title->SetZIndex(100);
     m_title ->SetVisible(true);
     m_title->SetPosition({0.0f,230.0f});
@@ -106,32 +107,59 @@ void FirstWorldTwo::StartLevel2(App *app) {
     m_score =std::make_shared<TEXTS>( "0") ;
     m_score->SetZIndex(100);
     m_score ->SetVisible(true);
-    m_score->SetPosition({-250.0f,200.0f});
+    m_score->SetPosition({-280.0f,200.0f});
     app->m_Root.AddChild(m_score);
 
     m_coin =std::make_shared<TEXTS>( "0") ;
     m_coin->SetZIndex(100);
     m_coin ->SetVisible(true);
-    m_coin->SetPosition({-80.0f,200.0f});
+    m_coin->SetPosition({-130.0f,200.0f});
     app->m_Root.AddChild(m_coin);
 
-    m_world =std::make_shared<TEXTS>( "1-2") ;
+    m_world =std::make_shared<TEXTS>( "1-1") ;
     m_world->SetZIndex(100);
     m_world ->SetVisible(true);
-    m_world->SetPosition({110.0f,200.0f});
+    m_world->SetPosition({25.0f,200.0f});
     app->m_Root.AddChild(m_world);
 
     m_time =std::make_shared<TEXTS>( "0") ;
     m_time->SetZIndex(100);
     m_time ->SetVisible(true);
-    m_time->SetPosition({270.0f,200.0f});
+    m_time->SetPosition({180.0f,200.0f});
     app->m_Root.AddChild(m_time);
 
-    m_popup =std::make_shared<TEXTS>( "100") ;
-    m_popup->SetZIndex(100);
-    m_popup ->SetVisible(false);
-    m_popup->SetPosition({0.0f,0.0f});
-    app->m_Root.AddChild(m_popup);
+    m_lives =std::make_shared<TEXTS>( "3") ;
+    m_lives->SetZIndex(100);
+    m_lives ->SetVisible(true);
+    m_lives->SetPosition({300.0f,200.0f});
+    app->m_Root.AddChild(m_lives);
+
+    m_popup1 =std::make_shared<TEXTS>( "100") ;
+    m_popup1->SetZIndex(100);
+    m_popup1 ->SetVisible(false);
+    m_popup1->SetPosition({0.0f,0.0f});
+    app->m_Root.AddChild(m_popup1);
+    m_popup2 =std::make_shared<TEXTS>( "200") ;
+    m_popup2->SetZIndex(100);
+    m_popup2 ->SetVisible(false);
+    m_popup2->SetPosition({0.0f,0.0f});
+    app->m_Root.AddChild(m_popup2);
+    m_popup3 =std::make_shared<TEXTS>( "300") ;
+    m_popup3->SetZIndex(100);
+    m_popup3 ->SetVisible(false);
+    m_popup3->SetPosition({0.0f,0.0f});
+    app->m_Root.AddChild(m_popup3);
+    m_popup4 =std::make_shared<TEXTS>( "400") ;
+    m_popup4->SetZIndex(100);
+    m_popup4 ->SetVisible(false);
+    m_popup4->SetPosition({0.0f,0.0f});
+    app->m_Root.AddChild(m_popup4);
+    m_popup_lvlup_score =std::make_shared<TEXTS>( "1000") ;
+    m_popup_lvlup_score->SetZIndex(100);
+    m_popup_lvlup_score ->SetVisible(false);
+    m_popup_lvlup_score->SetPosition({0.0f,0.0f});
+    app->m_Root.AddChild(m_popup_lvlup_score);
+
 
     //BGM
     m_BGMusic = std::make_unique<Util::BGM>(GA_RESOURCE_DIR"/Audio/BGMusic.mp3");
@@ -258,10 +286,22 @@ void FirstWorldTwo::StartLevel2(App *app) {
         MarioShrink.emplace_back(GA_RESOURCE_DIR"/Mario/mario.png");
     }
 
+    //mario shrink back
+    MarioShrinkBack.reserve(52);
+    for(int i=0;i<8;i++){
+        MarioShrinkBack.emplace_back(GA_RESOURCE_DIR"/Mario/MarioShrink1.png");
+    }
+    for(int i=0;i<8;i++){
+        MarioShrinkBack.emplace_back(GA_RESOURCE_DIR"/Mario/MarioShrink2.png");
+    }
+    for(int i=0;i<36;i++){
+        MarioShrinkBack.emplace_back(GA_RESOURCE_DIR"/Mario/marioBack.png");
+    }
+
     //mushroom
     Mushroom1.reserve(2);
     for(int i=0;i<2;i++){
-        Mushroom1.emplace_back(GA_RESOURCE_DIR"/images/goombas_"+std::to_string(i)+".png");
+        Mushroom1.emplace_back(GA_RESOURCE_DIR"/images/goombas2_"+std::to_string(i)+".png");
     }
 
     for(int i=0;i<13;i++){
@@ -275,7 +315,7 @@ void FirstWorldTwo::StartLevel2(App *app) {
         app->m_Root.AddChild(m_MushVector[i]);
 
     }
-    m_MushVector[0]->SetPosition({131.0f,-172.0f});
+    m_MushVector[0]->SetPosition({121.0f,-172.0f});
     m_MushVector[1]->SetPosition({163.0f,-140.0f});
     m_MushVector[2]->SetPosition({543.0f,-172.0f});
 
@@ -295,18 +335,19 @@ void FirstWorldTwo::StartLevel2(App *app) {
 
     m_MushVector[12]->SetPosition({3235.0f,-172.0f});
 
-
-
+    //dead mushroom 1 and 2
+    MushroomDead1 = GA_RESOURCE_DIR"/images/goombas2_dead.png";
+    MushroomDead2 = GA_RESOURCE_DIR"/images/goombas2_dead2.png";
 
     //koopa
     KoopaPic.reserve(2);
     for(int i = 0;i<2;i++){
-        KoopaPic.emplace_back(GA_RESOURCE_DIR"/images/koopa_"+std::to_string(i)+".png");
+        KoopaPic.emplace_back(GA_RESOURCE_DIR"/images/koopa2_"+std::to_string(i)+".png");
     }
     for(int i=0;i<3;i++){
         m_Koopa = std::make_shared<Koopa>(KoopaPic);
         m_Koopa->SetInterval(100);
-        m_Koopa->SetZIndex(5);
+        m_Koopa->SetZIndex(25);
         m_Koopa->SetLooping(true);
         m_Koopa->SetPlaying();
         m_Koopa->SetVisible(false);
@@ -315,20 +356,51 @@ void FirstWorldTwo::StartLevel2(App *app) {
 
     }
 
-    m_KoopaVec[0]->SetPosition({1055.0f,-169.0f});
-    m_KoopaVec[1]->SetPosition({1119.0f,-169.0f});
+    m_KoopaVec[0]->SetPosition({1055.0f,-165.0f});
+    m_KoopaVec[1]->SetPosition({1119.0f,-165.0f});
 
-    m_KoopaVec[2]->SetPosition({1567.0f,-169.0f});
+    m_KoopaVec[2]->SetPosition({1567.0f,-165.0f});
 
+    //koopa red
+    m_KoopaRed = std::make_shared<Koopa>(KoopaPic);
+    m_KoopaRed->SetInterval(100);
+    m_KoopaRed->SetZIndex(5);
+    m_KoopaRed->SetLooping(true);
+    m_KoopaRed->SetPlaying();
+    m_KoopaRed->SetVisible(false);
+    m_KoopaRed->SetPosition({4596.0f,-165.0f});
+    app->m_Root.AddChild(m_KoopaRed);
+
+    //koopa dead
+    KoopaDeadPic = GA_RESOURCE_DIR"/images/koopa2_dead.png";
 
     KoopaBack.reserve(2);
-    KoopaBack.emplace_back(GA_RESOURCE_DIR"/images/koopa_0Back.png");
-    KoopaBack.emplace_back(GA_RESOURCE_DIR"/images/koopa_1Back.png");
+    KoopaBack.emplace_back(GA_RESOURCE_DIR"/images/koopa2_0Back.png");
+    KoopaBack.emplace_back(GA_RESOURCE_DIR"/images/koopa2_1Back.png");
+
+    //piranha
+    PiranhaPic.reserve(2);
+    PiranhaPic.emplace_back(GA_RESOURCE_DIR"/images/piranha1.png");
+    PiranhaPic.emplace_back(GA_RESOURCE_DIR"/images/piranha2.png");
+
+    for(int i=0;i<3;i++){
+        m_Piranhas.push_back(std::make_shared<Piranha>(PiranhaPic));
+        m_Piranhas[i]->SetInterval(150);
+        m_Piranhas[i]->SetZIndex(5);
+        m_Piranhas[i]->SetLooping(true);
+        m_Piranhas[i]->SetPlaying();
+        m_Piranhas[i]->SetVisible(false);
+        app->m_Root.AddChild(m_Piranhas[i]);
+    }
+
+    m_Piranhas[0]->SetPosition({2977.0f,-125.0f});
+    m_Piranhas[1]->SetPosition({3171.0f,-85.0f});
+    m_Piranhas[2]->SetPosition({3362.0f,-155.0f});
 
     //Background tiles
     for(int i = 1; i <= 6; i++){
         m_Land.push_back(std::make_shared<Character>(GA_RESOURCE_DIR"/images/landLongWorld2_"+std::to_string(i)+".png"));
-        m_Land[i-1]->SetZIndex(5);
+        m_Land[i-1]->SetZIndex(20);
         m_Land[i-1]->SetVisible(true);
         app->m_Root.AddChild(m_Land[i-1]);
     }
@@ -380,13 +452,13 @@ void FirstWorldTwo::StartLevel2(App *app) {
     }
 
     //brick
-    for(int i = 0;i<263;i++){
+    for(int i = 0;i<277;i++){
         m_Brick.push_back(std::make_shared<Brick>(GA_RESOURCE_DIR"/images/tilesWorld2_1.png"));
         m_Brick[i]->SetZIndex(10);
         m_Brick[i]->SetVisible(false);
         app->m_Root.AddChild(m_Brick[i]);
     }
-    m_Brick[0]->SetPosition({575.0f,-42.0f});
+    m_Brick[0]->SetPosition({543.0f,-42.0f});
 
     m_Brick[1]->SetPosition({895.0f,-74.0f});
     m_Brick[2]->SetPosition({895.0f,-42.0f});
@@ -567,6 +639,10 @@ void FirstWorldTwo::StartLevel2(App *app) {
     m_Brick[260]->SetPosition({3613.0f,-172.0f});
     m_Brick[261]->SetPosition({3613.0f,-140.0f});
     m_Brick[262]->SetPosition({3613.0f,-108.0f});
+
+    for(int i=0;i<14;i++){
+        m_Brick[263+i]->SetPosition({-349.0f,(-172.0f+(32.0f*i))});
+    }
 
 
     //brick_break
@@ -757,8 +833,8 @@ void FirstWorldTwo::StartLevel2(App *app) {
 
 
     //brick move
-    for(int i=0;i<256;i++){
-        m_BrickMove.push_back(std::make_shared<Character>(GA_RESOURCE_DIR"/images/inAir1.png"));
+    for(int i=0;i<263;i++){
+        m_BrickMove.push_back(std::make_shared<Brick>(GA_RESOURCE_DIR"/images/tilesworld2_1.png"));
         m_BrickMove[i]->SetZIndex(5);
         m_BrickMove[i]->SetVisible(false);
         m_BrickMove[i]->SetPosition({-1000.0f,-1000.0f});
@@ -769,7 +845,7 @@ void FirstWorldTwo::StartLevel2(App *app) {
     //Tube
     for(int i=0;i<3;i++){
         m_Tube.push_back(std::make_shared<Character>(GA_RESOURCE_DIR"/images/tube.png"));
-        m_Tube[i]->SetZIndex(5);
+        m_Tube[i]->SetZIndex(10);
         m_Tube[i]->SetVisible(true);
 
     }
@@ -878,12 +954,12 @@ void FirstWorldTwo::StartLevel2(App *app) {
      */
 
     //Coins
-    Coins.reserve(3);
+    CoinsPic.reserve(3);
     for(int i = 0 ; i < 3 ; i++){
-        Coins.emplace_back(GA_RESOURCE_DIR"/images/coin_an"+std::to_string(i)+".png");
+        CoinsPic.emplace_back(GA_RESOURCE_DIR"/images/coin_an"+std::to_string(i)+".png");
     }
-    for(int i=0;i<14;i++){
-        m_Coins.push_back(std::make_shared<AnimatedCharacter>(Coins));
+    for(int i=0;i<22;i++){
+        m_Coins.push_back(std::make_shared<Coins>(CoinsPic));
         m_Coins[i]->SetInterval(100);
         m_Coins[i]->SetZIndex(3);
         m_Coins[i]->SetVisible(false);
@@ -902,7 +978,7 @@ void FirstWorldTwo::StartLevel2(App *app) {
     }
     for(int i=0;i<17;i++){
         LOG_DEBUG("coins2");
-        m_Coins2 = std::make_shared<AnimatedCharacter>(CoinsLvl2);
+        m_Coins2 = std::make_shared<Coins>(CoinsLvl2);
         m_Coins2->SetLooping(true);
         m_Coins2->SetPlaying();
         m_Coins2->SetZIndex(5);
@@ -911,26 +987,26 @@ void FirstWorldTwo::StartLevel2(App *app) {
         app->m_Root.AddChild(m_Coins2Vec[i]);
 
     }
-    m_Coins2Vec[0]->SetPosition({959.0f,50.0f});
-    m_Coins2Vec[1]->SetPosition({991.0f,50.0f});
-    m_Coins2Vec[2]->SetPosition({1023.0f,50.0f});
-    m_Coins2Vec[3]->SetPosition({1055.0f,50.0f});
-    m_Coins2Vec[4]->SetPosition({927.0f,-42.0f});
-    m_Coins2Vec[5]->SetPosition({1087.0f,-42.0f});
+    m_Coins2Vec[0]->SetPosition({959.0f,53.0f});
+    m_Coins2Vec[1]->SetPosition({991.0f,53.0f});
+    m_Coins2Vec[2]->SetPosition({1023.0f,53.0f});
+    m_Coins2Vec[3]->SetPosition({1055.0f,53.0f});
+    m_Coins2Vec[4]->SetPosition({927.0f,-39.0f});
+    m_Coins2Vec[5]->SetPosition({1087.0f,-39.0f});
 
-    m_Coins2Vec[6]->SetPosition({1535.0f,-42.0f});
-    m_Coins2Vec[7]->SetPosition({1567.0f,-42.0f});
-    m_Coins2Vec[8]->SetPosition({1599.0f,-42.0f});
-    m_Coins2Vec[9]->SetPosition({1631.0f,-42.0f});
+    m_Coins2Vec[6]->SetPosition({1535.0f,-39.0f});
+    m_Coins2Vec[7]->SetPosition({1567.0f,-39.0f});
+    m_Coins2Vec[8]->SetPosition({1599.0f,-39.0f});
+    m_Coins2Vec[9]->SetPosition({1631.0f,-39.0f});
 
-    m_Coins2Vec[10]->SetPosition({1855.0f,-42.0f});
+    m_Coins2Vec[10]->SetPosition({1855.0f,-39.0f});
 
-    m_Coins2Vec[11]->SetPosition({2355.0f,-10.0f});
-    m_Coins2Vec[12]->SetPosition({2387.0f,-10.0f});
-    m_Coins2Vec[13]->SetPosition({2419.0f,-10.0f});
-    m_Coins2Vec[14]->SetPosition({2451.0f,-10.0f});
-    m_Coins2Vec[15]->SetPosition({2483.0f,-10.0f});
-    m_Coins2Vec[16]->SetPosition({2515.0f,-10.0f});
+    m_Coins2Vec[11]->SetPosition({2355.0f,23.0f});
+    m_Coins2Vec[12]->SetPosition({2387.0f,23.0f});
+    m_Coins2Vec[13]->SetPosition({2419.0f,23.0f});
+    m_Coins2Vec[14]->SetPosition({2451.0f,23.0f});
+    m_Coins2Vec[15]->SetPosition({2483.0f,23.0f});
+    m_Coins2Vec[16]->SetPosition({2515.0f,23.0f});
 
 
 
@@ -1063,5 +1139,45 @@ void FirstWorldTwo::Finish(App *app) {
     marioFromTube = true;
 
     SetState(State::UPDATE);
+
+}
+
+void FirstWorldTwo::WinLevel(App *app) {
+    LOG_DEBUG("win level");
+
+    m_finishGame = std::make_shared<TEXTS>("CONGRATULATIONS");
+    m_finishGame->SetZIndex(100);
+    m_finishGame ->SetVisible(true);
+    m_finishGame->SetPosition({0.0f,100.0f});
+    app->m_Root.AddChild(m_finishGame);
+
+    m_instruction = std::make_shared<TEXTS>("Press  M to go back to Main Menu");
+    m_instruction->SetZIndex(100);
+    m_instruction ->SetVisible(true);
+    m_instruction->SetPosition({0.0f,50.0f});
+    app->m_Root.AddChild(m_instruction);
+
+    SetState(State::WINLEVEL2);
+
+}
+
+void FirstWorldTwo::WinLevel2(App *app) {
+    LOG_DEBUG("WinLevel2");
+
+    if (Util::Input::IsKeyPressed(Util::Keycode::ESCAPE) || Util::Input::IfExit()) {
+        LOG_DEBUG("escape");
+        SetState(State::END);
+
+    }
+    else if(Util::Input::IsKeyPressed(Util::Keycode::M)){
+        Restart(app);
+        app->SetPhase(App::Phases::MENU);
+        app->ChangePhase(App::Phases::MENU);
+    }
+    else{
+        SetState(State::WINLEVEL2);
+    }
+
+    app->m_Root.Update();
 
 }

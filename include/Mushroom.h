@@ -173,7 +173,6 @@ public:
                 bool collideY = collideY1 || collideY2 || collideY3 || collideY4;
 
 
-
                 if(collideX && collideY){
                     return true;
                 }
@@ -181,6 +180,7 @@ public:
         }
         return false;
     }
+
     unsigned long m_MushroomDieTime = 0;
 
     float direction = -1.0f;

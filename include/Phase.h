@@ -17,6 +17,8 @@ public:
         STARTLEVEL2,
         UPDATE,
         FINISH,
+        WINLEVEL,
+        WINLEVEL2,
         END,
         EXIT,
     };
@@ -34,6 +36,10 @@ public:
     virtual void Update(App *app);
 
     virtual void Finish(App *app);
+
+    virtual void WinLevel(App *app);
+
+    virtual void WinLevel2(App *app);
 
     virtual void End(App *app);
 
@@ -62,14 +68,22 @@ public:
     std::shared_ptr<Util::SFX> m_Mario_bump_audio;
     std::shared_ptr<Util::SFX> m_Mario_levelFinish_audio;
     std::shared_ptr<Util::SFX> m_Mario_flagpole_audio;
+    std::shared_ptr<Util::SFX> m_Brick_Break_audio;
+    std::shared_ptr<Util::SFX> PowerUP_audio;
 
     std::shared_ptr<TEXTS> m_title;
-
     std::shared_ptr<TEXTS> m_score;
     std::shared_ptr<TEXTS> m_coin;
     std::shared_ptr<TEXTS> m_world;
     std::shared_ptr<TEXTS> m_time;
-    std::shared_ptr<TEXTS> m_popup;
+    std::shared_ptr<TEXTS> m_finishGame;
+    std::shared_ptr<TEXTS> m_instruction;
+    std::shared_ptr<TEXTS> m_popup_lvlup_score;
+    std::shared_ptr<TEXTS> m_popup1;
+    std::shared_ptr<TEXTS> m_popup2;
+    std::shared_ptr<TEXTS> m_popup3;
+    std::shared_ptr<TEXTS> m_popup4;
+    std::shared_ptr<TEXTS> m_lives;
 
     std::shared_ptr<BackgroundImage> m_Bg1;
 
@@ -82,7 +96,6 @@ public:
     std::shared_ptr<Character> m_Tube2;
 
     std::vector<std::shared_ptr<Character>> m_DeadQues;
-    std::vector<std::shared_ptr<Character>> m_BrickMove;
     std::vector<std::shared_ptr<Character>> m_Land;
     std::vector<std::shared_ptr<Character>> m_Tube;
     std::vector<std::shared_ptr<Character>> m_Wood;
@@ -92,6 +105,7 @@ public:
     std::vector<std::shared_ptr<Character>> m_TubeBig2Vec;
 
     std::vector<std::shared_ptr<Brick>> m_Brick;
+    std::vector<std::shared_ptr<Brick>> m_BrickMove;
 
     std::vector<std::vector<std::shared_ptr<Brick>>> m_Brick_break;
 
@@ -101,11 +115,15 @@ public:
 
     std::vector<std::shared_ptr<Koopa>> m_KoopaVec;
 
+    std::shared_ptr<Koopa> m_KoopaRed;
+
     std::vector<std::shared_ptr<QuestionTiles>> m_QuesVector;
 
     std::shared_ptr<QuestionTiles> m_Question;
 
     std::vector<std::shared_ptr<Mushroom>> m_MushVector;
+
+    std::vector<std::shared_ptr<Piranha>> m_Piranhas;
 
     std::shared_ptr<Mario> m_Mario;
     std::shared_ptr<Mario> m_MarioPillar;
@@ -115,10 +133,10 @@ public:
 
     std::shared_ptr<YellowMush> m_YellowMush;
 
-    std::shared_ptr<AnimatedCharacter> m_Coins2;
+    std::shared_ptr<Coins> m_Coins2;
 
-    std::vector<std::shared_ptr<AnimatedCharacter>> m_Coins2Vec;
-    std::vector<std::shared_ptr<AnimatedCharacter>> m_Coins;
+    std::vector<std::shared_ptr<Coins>> m_Coins2Vec;
+    std::vector<std::shared_ptr<Coins>> m_Coins;
 
     std::shared_ptr<Koopa> m_Koopa;
 
@@ -138,10 +156,10 @@ public:
     std::vector<std::string> MarioPillar;
     std::vector<std::string> MarioPillar2;
     std::vector<std::string> MarioShrink;
+    std::vector<std::string> MarioShrinkBack;
     std::vector<std::string> Mushroom1;
     std::vector<std::string> QuestionMark;
-    std::vector<std::string> Coins;
-    std::vector<std::string> KoopaPic;
+    std::vector<std::string> CoinsPic;
     std::vector<std::string> levelUp;
     std::vector<std::string> levelUpBack;
     std::vector<std::string> MarioBigFront;
@@ -154,7 +172,15 @@ public:
     std::vector<std::string> MarioPillarEnd;
     std::vector<std::string> MarioPillarEnd2;
     std::vector<std::string> CoinsLvl2;
+    std::vector<std::string> KoopaPic;
     std::vector<std::string> KoopaBack;
+    std::vector<std::string> KoopaRed; //idk
+    std::vector<std::string> KoopaRedBack; //idk
+    std::vector<std::string> PiranhaPic;
+
+    std::string KoopaDeadPic;
+    std::string MushroomDead1;
+    std::string MushroomDead2;
 
     int index=0;
     int index2=0;
@@ -166,6 +192,8 @@ public:
     int isBrick = 0;
     int MarioLevel = 0;
     int MarioComesOutTime = 0;
+    int piranhaOutTime = 0;
+    int koopaRedTime = 0;
 
     float slideTime=0;
     float SpeedInAir=0;
@@ -206,6 +234,8 @@ public:
     void moveBackground(float position, App *app);
 
     void callMario();
+
+    void MarioDeath();
 
     float searchLand(std::shared_ptr<AnimatedCharacter>);
 

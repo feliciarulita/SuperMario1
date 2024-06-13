@@ -24,10 +24,13 @@ public:
         for(int i=0;i<Object.size();i++){
             auto tiles = Object[i];
             bool collideX = (GetPosition().x + GetScaledSize().x/2>=tiles->GetPosition().x-tiles->GetScaledSize().x/2)&&(GetPosition().x+GetScaledSize().x/2<=tiles->GetPosition().x+tiles->GetScaledSize().x/2);
-            bool collideY1 = (GetPosition().y + GetScaledSize().y/2<(tiles->GetPosition().y+tiles->GetScaledSize().y/2) && GetPosition().y+GetScaledSize().y/2>tiles->GetPosition().y-tiles->GetScaledSize().y/2);
-            bool collideY2 = (GetPosition().y - GetScaledSize().y/2<tiles->GetPosition().y+tiles->GetScaledSize().y/2) && GetPosition().y-GetScaledSize().y/2>tiles->GetPosition().y-tiles->GetScaledSize().y/2;
+            bool collideY1 = (GetPosition().y + GetScaledSize().y/2<=(tiles->GetPosition().y+tiles->GetScaledSize().y/2) && GetPosition().y+GetScaledSize().y/2>=tiles->GetPosition().y-tiles->GetScaledSize().y/2);
+            bool collideY2 = (GetPosition().y - GetScaledSize().y/2<=tiles->GetPosition().y+tiles->GetScaledSize().y/2) && GetPosition().y-GetScaledSize().y/2>=tiles->GetPosition().y-tiles->GetScaledSize().y/2;
 
-            bool collideY = collideY1 || collideY2;
+            bool collideY3 = (tiles->GetPosition().y + tiles->GetScaledSize().y/2 <= GetPosition().y+GetScaledSize().y/2)&&(tiles->GetPosition().y+tiles->GetScaledSize().y/2>=GetPosition().y+GetScaledSize().y/2);
+            bool collideY4 = (tiles->GetPosition().y - tiles->GetScaledSize().y/2 >= GetPosition().y - GetScaledSize().y/2)&& (tiles->GetPosition().y - tiles->GetScaledSize().y/2 <= GetPosition().y+GetScaledSize().y/2);
+
+            bool collideY = collideY1 || collideY2 || collideY3 || collideY4;
 
             if(collideX && collideY){
                 return true;
@@ -41,10 +44,13 @@ public:
         for(int i=0;i<Object.size();i++){
             auto tiles = Object[i];
             bool collideX = (GetPosition().x - GetScaledSize().x/2>=tiles->GetPosition().x-tiles->GetScaledSize().x/2)&&(GetPosition().x - GetScaledSize().x/2<=tiles->GetPosition().x+tiles->GetScaledSize().x/2);
-            bool collideY1 = (GetPosition().y + GetScaledSize().y/2<(tiles->GetPosition().y+tiles->GetScaledSize().y/2) && GetPosition().y+GetScaledSize().y/2>tiles->GetPosition().y-tiles->GetScaledSize().y/2);
-            bool collideY2 = (GetPosition().y - GetScaledSize().y/2<tiles->GetPosition().y+tiles->GetScaledSize().y/2) && GetPosition().y-GetScaledSize().y/2>tiles->GetPosition().y-tiles->GetScaledSize().y/2;
+            bool collideY1 = (GetPosition().y + GetScaledSize().y/2<=(tiles->GetPosition().y+tiles->GetScaledSize().y/2) && GetPosition().y+GetScaledSize().y/2>=tiles->GetPosition().y-tiles->GetScaledSize().y/2);
+            bool collideY2 = (GetPosition().y - GetScaledSize().y/2<=tiles->GetPosition().y+tiles->GetScaledSize().y/2) && GetPosition().y-GetScaledSize().y/2>=tiles->GetPosition().y-tiles->GetScaledSize().y/2;
 
-            bool collideY = collideY1 || collideY2;
+            bool collideY3 = (tiles->GetPosition().y + tiles->GetScaledSize().y/2 <= GetPosition().y+GetScaledSize().y/2)&&(tiles->GetPosition().y+tiles->GetScaledSize().y/2>=GetPosition().y+GetScaledSize().y/2);
+            bool collideY4 = (tiles->GetPosition().y - tiles->GetScaledSize().y/2 >= GetPosition().y - GetScaledSize().y/2)&& (tiles->GetPosition().y - tiles->GetScaledSize().y/2 <= GetPosition().y+GetScaledSize().y/2);
+
+            bool collideY = collideY1 || collideY2 || collideY3 || collideY4;
 
             if(collideX && collideY){
                 return true;
@@ -100,13 +106,89 @@ public:
         return false;
     }
 
+    bool IsCollideRightDead(std::vector<std::shared_ptr<Koopa>> Object ,int index){
+        for(int i=0;i<Object.size();i++){
+            if(i!=index) {
+                auto tiles = Object[i];
+                bool collideX = (GetPosition().x + GetScaledSize().x / 2 >=
+                                 tiles->GetPosition().x - tiles->GetScaledSize().x / 2) &&
+                                (GetPosition().x + GetScaledSize().x / 2 <=
+                                 tiles->GetPosition().x + tiles->GetScaledSize().x / 2);
+                bool collideY1 = (GetPosition().y + GetScaledSize().y / 2 <=
+                                  (tiles->GetPosition().y + tiles->GetScaledSize().y / 2) &&
+                                  GetPosition().y + GetScaledSize().y / 2 >=
+                                  tiles->GetPosition().y - tiles->GetScaledSize().y / 2);
+                bool collideY2 = (GetPosition().y - GetScaledSize().y / 2 <=
+                                  tiles->GetPosition().y + tiles->GetScaledSize().y / 2) &&
+                                 GetPosition().y - GetScaledSize().y / 2 >=
+                                 tiles->GetPosition().y - tiles->GetScaledSize().y / 2;
+
+                bool collideY3 = (tiles->GetPosition().y + tiles->GetScaledSize().y / 2 <=
+                                  GetPosition().y + GetScaledSize().y / 2) &&
+                                 (tiles->GetPosition().y + tiles->GetScaledSize().y / 2 >=
+                                  GetPosition().y + GetScaledSize().y / 2);
+                bool collideY4 = (tiles->GetPosition().y - tiles->GetScaledSize().y / 2 >=
+                                  GetPosition().y - GetScaledSize().y / 2) &&
+                                 (tiles->GetPosition().y - tiles->GetScaledSize().y / 2 <=
+                                  GetPosition().y + GetScaledSize().y / 2);
+
+                bool collideY = collideY1 || collideY2 || collideY3 || collideY4;
+
+                if (collideX && collideY && tiles->levelUp && stepTimes != 2) {
+                    return true;
+                }
+            }
+
+        }
+        return false;
+    }
+
+    bool IsCollideLeftDead(std::vector<std::shared_ptr<Koopa>> Object, int index){
+        for(int i=0;i<Object.size();i++){
+            if(i!=index) {
+                auto tiles = Object[i];
+                bool collideX = (GetPosition().x - GetScaledSize().x / 2 >=
+                                 tiles->GetPosition().x - tiles->GetScaledSize().x / 2) &&
+                                (GetPosition().x - GetScaledSize().x / 2 <=
+                                 tiles->GetPosition().x + tiles->GetScaledSize().x / 2);
+                bool collideY1 = (GetPosition().y + GetScaledSize().y / 2 <=
+                                  (tiles->GetPosition().y + tiles->GetScaledSize().y / 2) &&
+                                  GetPosition().y + GetScaledSize().y / 2 >=
+                                  tiles->GetPosition().y - tiles->GetScaledSize().y / 2);
+                bool collideY2 = (GetPosition().y - GetScaledSize().y / 2 <=
+                                  tiles->GetPosition().y + tiles->GetScaledSize().y / 2) &&
+                                 GetPosition().y - GetScaledSize().y / 2 >=
+                                 tiles->GetPosition().y - tiles->GetScaledSize().y / 2;
+
+                bool collideY3 = (tiles->GetPosition().y + tiles->GetScaledSize().y / 2 <=
+                                  GetPosition().y + GetScaledSize().y / 2) &&
+                                 (tiles->GetPosition().y + tiles->GetScaledSize().y / 2 >=
+                                  GetPosition().y + GetScaledSize().y / 2);
+                bool collideY4 = (tiles->GetPosition().y - tiles->GetScaledSize().y / 2 >=
+                                  GetPosition().y - GetScaledSize().y / 2) &&
+                                 (tiles->GetPosition().y - tiles->GetScaledSize().y / 2 <=
+                                  GetPosition().y + GetScaledSize().y / 2);
+
+                bool collideY = collideY1 || collideY2 || collideY3 || collideY4;
+
+                if (collideX && collideY && tiles->levelUp && stepTimes != 2) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     int stepTimes = 0;
 
     float direction = -1.0f;
     float directionUp = 1.0f;
+    float time_koopa =0.0f;
 
     bool EnemyDie = false;
+    bool EnemyDie2 = false;
     bool isActive = false;
+    //bool isActive2 = false;
     bool levelUp = false;
 
 private:
