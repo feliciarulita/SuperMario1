@@ -134,7 +134,7 @@ public:
 
                 bool collideY = collideY1 || collideY2 || collideY3 || collideY4;
 
-                if (collideX && collideY && tiles->levelUp && stepTimes != 2) {
+                if (collideX && collideY && tiles->levelUp ) {
                     return true;
                 }
             }
@@ -171,7 +171,7 @@ public:
 
                 bool collideY = collideY1 || collideY2 || collideY3 || collideY4;
 
-                if (collideX && collideY && tiles->levelUp && stepTimes != 2) {
+                if (collideX && collideY && tiles->levelUp ) {
                     return true;
                 }
             }
@@ -184,6 +184,8 @@ public:
     float direction = -1.0f;
     float directionUp = 1.0f;
     float time_koopa =0.0f;
+    float Y_start_koopa = 0.0f;
+
 
     bool EnemyDie = false;
     bool EnemyDie2 = false;

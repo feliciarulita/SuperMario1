@@ -27,9 +27,10 @@ void Phase::Restart(App *app) {
     m_Mario_bump_audio = nullptr;
     m_Mario_levelFinish_audio = nullptr;
     m_Mario_flagpole_audio = nullptr;
+    m_Brick_Break_audio = nullptr;
+    PowerUP_audio = nullptr;
 
     m_title = nullptr;
-
     m_score = nullptr;
     m_coin = nullptr;
     m_world = nullptr;
@@ -40,6 +41,7 @@ void Phase::Restart(App *app) {
     m_popup3 = nullptr;
     m_popup4 = nullptr;
     m_popup_lvlup_score = nullptr;
+    m_lives = nullptr;
 
     m_Bg = nullptr;
 
@@ -207,4 +209,36 @@ void Phase::WinLevel(App *app) {
 
 void Phase::WinLevel2(App *app) {
     SetState(State::UPDATE);
+}
+
+void Phase::GameOver(App *app) {
+    m_finishGame = std::make_shared<TEXTS>("GAME OVER");
+    m_finishGame->SetZIndex(100);
+    m_finishGame->SetVisible(true);
+    m_finishGame->SetPosition({0.0f,100.0f});
+    app->m_Root.AddChild(m_finishGame);
+
+    m_instruction = std::make_shared<TEXTS>("Press  M to go back to Main Menu");
+    m_instruction->SetZIndex(100);
+    m_instruction ->SetVisible(true);
+    m_instruction->SetPosition({0.0f,50.0f});
+    app->m_Root.AddChild(m_instruction);
+
+    if (Util::Input::IsKeyPressed(Util::Keycode::ESCAPE) || Util::Input::IfExit()) {
+        LOG_DEBUG("escape");
+        SetState(State::END);
+
+    }
+    else if(Util::Input::IsKeyPressed(Util::Keycode::M)){
+        Restart(app);
+        app->MarioLives = 3;
+        app->MarioLevel = 0;
+        app->SetPhase(App::Phases::MENU);
+        app->ChangePhase(App::Phases::MENU);
+    }
+    else{
+        SetState(State::GAMEOVER);
+    }
+
+    app->m_Root.Update();
 }

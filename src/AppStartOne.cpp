@@ -58,7 +58,7 @@ void FirstWorldOne::Start(App *app){
     m_time->SetPosition({180.0f,200.0f});
     app->m_Root.AddChild(m_time);
 
-    m_lives =std::make_shared<TEXTS>( "3") ;
+    m_lives =std::make_shared<TEXTS>( std::to_string(app->MarioLives)) ;
     m_lives->SetZIndex(100);
     m_lives ->SetVisible(true);
     m_lives->SetPosition({300.0f,200.0f});
@@ -93,8 +93,7 @@ void FirstWorldOne::Start(App *app){
 
     //BGM
     m_BGMusic = std::make_unique<Util::BGM>(GA_RESOURCE_DIR"/Audio/BGMusic.mp3");
-    //m_BGMusic->SetVolume(35);
-    m_BGMusic->SetVolume(0);
+    m_BGMusic->SetVolume(35);
     m_BGMusic->Play();
 
     //Bg
@@ -278,6 +277,12 @@ void FirstWorldOne::Start(App *app){
     }
 
     m_KoopaVec[0]->SetPosition({3507.0f,-169.0f});
+
+    //koopa red
+    m_KoopaRed = std::make_shared<Koopa>(KoopaPic);
+    m_KoopaRed->SetVisible(false);
+    m_KoopaRed->SetPosition({-1000.0f,-1000.0f});
+    app->m_Root.AddChild(m_KoopaRed);
 
     KoopaBack.reserve(2);
     KoopaBack.emplace_back(GA_RESOURCE_DIR"/images/koopa_0Back.png");

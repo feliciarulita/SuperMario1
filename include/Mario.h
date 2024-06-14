@@ -42,6 +42,24 @@ public:
     }
 
     template<typename T>
+    bool IsStepOn(std::shared_ptr<T> Objects){
+        auto tiles = Objects;
+        bool collideX1 = (GetPosition().x-GetScaledSize().x/2>=tiles->GetPosition().x-((tiles->GetScaledSize().x)/2-2.0f))&&(GetPosition().x-GetScaledSize().x/2<=tiles->GetPosition().x+tiles->GetScaledSize().x/2+2.0f);
+        bool collideX2 = (GetPosition().x+GetScaledSize().x/2>=tiles->GetPosition().x-((tiles->GetScaledSize().x)/2)-2.0f)&&(GetPosition().x+GetScaledSize().x/2<=tiles->GetPosition().x+tiles->GetScaledSize().x/2+2.0f);
+        //bool collideY = (Object->GetPosition().y==tiles->GetPosition().y+tiles->GetScaledSize().y-(Object->GetScaledSize().y/2 + 3.0f));
+        bool collideY = ((GetPosition().y - GetScaledSize().y/2)>=tiles->GetPosition().y+tiles->GetScaledSize().y/2 - 15.0f) && ((GetPosition().y - GetScaledSize().y/2)<=tiles->GetPosition().y+tiles->GetScaledSize().y/2+5.0f);
+
+        glm::vec2 landPos = {GetPosition().x,tiles->GetPosition().y+tiles->GetScaledSize().y/2+GetScaledSize().y/2};
+
+        bool collideX = collideX1 || collideX2;
+
+        if((collideX) && (collideY)){
+            return {true};
+        }
+        return {false};
+    }
+
+    template<typename T>
     bool IsCollideRight(std::vector<std::shared_ptr<T>> Object ){
         for(int i=0;i<Object.size();i++){
             auto tiles = Object[i];
@@ -118,6 +136,23 @@ public:
 
         return false;
     }
+    bool IsCollideRight(std::shared_ptr<AnimatedCharacter> Object ){
+        bool collideX = (GetPosition().x + GetScaledSize().x/2>=Object->GetPosition().x-Object->GetScaledSize().x/2)&&(GetPosition().x+GetScaledSize().x/2<=Object->GetPosition().x+Object->GetScaledSize().x/2);
+        bool collideY1 = (GetPosition().y + GetScaledSize().y/2<(Object->GetPosition().y+Object->GetScaledSize().y/2) && GetPosition().y+GetScaledSize().y/2>Object->GetPosition().y-Object->GetScaledSize().y/2);
+        bool collideY2 = (GetPosition().y - GetScaledSize().y/2<Object->GetPosition().y+Object->GetScaledSize().y/2) && GetPosition().y-GetScaledSize().y/2>Object->GetPosition().y-Object->GetScaledSize().y/2;
+
+        bool collideY3 = (Object->GetPosition().y + Object->GetScaledSize().y/2 <= GetPosition().y+GetScaledSize().y/2)&&(Object->GetPosition().y+Object->GetScaledSize().y/2>=GetPosition().y+GetScaledSize().y/2);
+        bool collideY4 = (Object->GetPosition().y - Object->GetScaledSize().y/2 >= GetPosition().y - GetScaledSize().y/2)&& (Object->GetPosition().y - Object->GetScaledSize().y/2 <= GetPosition().y+GetScaledSize().y/2);
+
+        bool collideY = collideY1 || collideY2 || collideY3 || collideY4;
+
+        if(collideX && collideY){
+            return true;
+        }
+
+
+        return false;
+    }
 
     template<typename T>
     bool IsCollideLeft(std::vector<std::shared_ptr<T>> Object ){
@@ -158,7 +193,7 @@ public:
         return false;
     }
     bool IsCollideLeft(std::shared_ptr<AnimatedCharacter> Object ){
-        bool collideX = (GetPosition().x + GetScaledSize().x/2>=Object->GetPosition().x-Object->GetScaledSize().x/2)&&(GetPosition().x+GetScaledSize().x/2<=Object->GetPosition().x+Object->GetScaledSize().x/2);
+        bool collideX = (GetPosition().x - GetScaledSize().x/2>=Object->GetPosition().x-Object->GetScaledSize().x/2)&&(GetPosition().x-GetScaledSize().x/2<=Object->GetPosition().x+Object->GetScaledSize().x/2);
         bool collideY1 = (GetPosition().y + GetScaledSize().y/2<(Object->GetPosition().y+Object->GetScaledSize().y/2) && GetPosition().y+GetScaledSize().y/2>Object->GetPosition().y-Object->GetScaledSize().y/2);
         bool collideY2 = (GetPosition().y - GetScaledSize().y/2<Object->GetPosition().y+Object->GetScaledSize().y/2) && GetPosition().y-GetScaledSize().y/2>Object->GetPosition().y-Object->GetScaledSize().y/2;
 
@@ -189,6 +224,8 @@ public:
     bool MarioLevelingUp = false;
     bool MarioLevelingDown = false;
     bool MarioGoUp = false;
+    bool MarioStepKoopaRed = false;
+    bool MarioStepMush = false;
 
 
     void Update(unsigned long BaseTime);

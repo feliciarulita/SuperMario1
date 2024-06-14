@@ -21,6 +21,7 @@ public:
         WINLEVEL2,
         END,
         EXIT,
+        GAMEOVER,
     };
 
     State GetCurrentState() const { return m_CurrentState; }
@@ -42,6 +43,8 @@ public:
     virtual void WinLevel2(App *app);
 
     virtual void End(App *app);
+
+    void GameOver(App *app);
 
     void Restart(App *app);
 
@@ -235,7 +238,12 @@ public:
 
     void callMario();
 
-    void MarioDeath();
+    void MarioDeath(App *app);
+
+    template <typename T>
+    void popupWhenKills(std::shared_ptr<T> enemy, int power);
+
+    void steppingKoopaTwice(std::shared_ptr<Koopa> koopa, std::shared_ptr<Mario> mario, std::vector<std::shared_ptr<Character>> wood, std::vector<std::shared_ptr<Brick>> bricks, bool red);
 
     float searchLand(std::shared_ptr<AnimatedCharacter>);
 

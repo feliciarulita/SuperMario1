@@ -116,7 +116,7 @@ void FirstWorldTwo::StartLevel2(App *app) {
     m_coin->SetPosition({-130.0f,200.0f});
     app->m_Root.AddChild(m_coin);
 
-    m_world =std::make_shared<TEXTS>( "1-1") ;
+    m_world =std::make_shared<TEXTS>( "1-2") ;
     m_world->SetZIndex(100);
     m_world ->SetVisible(true);
     m_world->SetPosition({25.0f,200.0f});
@@ -128,7 +128,7 @@ void FirstWorldTwo::StartLevel2(App *app) {
     m_time->SetPosition({180.0f,200.0f});
     app->m_Root.AddChild(m_time);
 
-    m_lives =std::make_shared<TEXTS>( "3") ;
+    m_lives =std::make_shared<TEXTS>( std::to_string(app->MarioLives)) ;
     m_lives->SetZIndex(100);
     m_lives ->SetVisible(true);
     m_lives->SetPosition({300.0f,200.0f});
@@ -163,8 +163,7 @@ void FirstWorldTwo::StartLevel2(App *app) {
 
     //BGM
     m_BGMusic = std::make_unique<Util::BGM>(GA_RESOURCE_DIR"/Audio/BGMusic.mp3");
-    //m_BGMusic->SetVolume(35);
-    m_BGMusic->SetVolume(0);
+    m_BGMusic->SetVolume(35);
     m_BGMusic->Play();
 
     //Bg
@@ -394,8 +393,11 @@ void FirstWorldTwo::StartLevel2(App *app) {
     }
 
     m_Piranhas[0]->SetPosition({2977.0f,-125.0f});
+    m_Piranhas[0]->timer = 100;
     m_Piranhas[1]->SetPosition({3171.0f,-85.0f});
+    m_Piranhas[1]->timer = 150;
     m_Piranhas[2]->SetPosition({3362.0f,-155.0f});
+    m_Piranhas[2]->timer = 50;
 
     //Background tiles
     for(int i = 1; i <= 6; i++){
@@ -1133,6 +1135,16 @@ void FirstWorldTwo::Finish(App *app) {
         m_Castle[i]->SetPosition({590.0f,-172.0f + (i*32.0f)});
         app->m_Root.AddChild(m_Castle[i]);
     }
+    m_Piranhas.clear();
+    m_Piranhas.push_back(std::make_shared<Piranha>(PiranhaPic));
+    m_Piranhas[0]->SetInterval(150);
+    m_Piranhas[0]->SetZIndex(5);
+    m_Piranhas[0]->SetLooping(true);
+    m_Piranhas[0]->SetPlaying();
+    m_Piranhas[0]->SetVisible(false);
+    m_Piranhas[0]->timer = 100;
+    m_Piranhas[0]->SetPosition({-255.0f,-1000.0f});
+    app->m_Root.AddChild(m_Piranhas[0]);
 
     m_Mario->MarioGoUp = false;
     FinishLevel = true;
