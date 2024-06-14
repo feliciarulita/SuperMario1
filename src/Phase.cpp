@@ -233,6 +233,8 @@ void Phase::GameOver(App *app) {
         Restart(app);
         app->MarioLives = 3;
         app->MarioLevel = 0;
+        app->Scores = 0;
+        app->Coins = 0;
         app->SetPhase(App::Phases::MENU);
         app->ChangePhase(App::Phases::MENU);
     }

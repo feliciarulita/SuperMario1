@@ -34,13 +34,13 @@ void FirstWorldOne::Start(App *app){
     m_title->SetPosition({0.0f,230.0f});
     app->m_Root.AddChild(m_title);
 
-    m_score =std::make_shared<TEXTS>( "0") ;
+    m_score =std::make_shared<TEXTS>( std::to_string(app->Scores)) ;
     m_score->SetZIndex(100);
     m_score ->SetVisible(true);
     m_score->SetPosition({-280.0f,200.0f});
     app->m_Root.AddChild(m_score);
 
-    m_coin =std::make_shared<TEXTS>( "0") ;
+    m_coin =std::make_shared<TEXTS>( std::to_string(app->Coins)) ;
     m_coin->SetZIndex(100);
     m_coin ->SetVisible(true);
     m_coin->SetPosition({-130.0f,200.0f});
