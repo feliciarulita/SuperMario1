@@ -17,6 +17,43 @@ void FirstWorldTwo::Start(App *app) {
     m_Bg = std::make_shared<BackgroundImage>(GA_RESOURCE_DIR"/Background/WorldTwoBegin.png");
     app->m_Root.AddChild(m_Bg);
 
+    //text
+    m_title =std::make_shared<TEXTS>( "SCORE            COINS             WORLD             TIME           LIVE") ;
+    m_title->SetZIndex(100);
+    m_title ->SetVisible(true);
+    m_title->SetPosition({0.0f,230.0f});
+    app->m_Root.AddChild(m_title);
+
+    m_score =std::make_shared<TEXTS>( std::to_string(app->Scores)) ;
+    m_score->SetZIndex(100);
+    m_score ->SetVisible(true);
+    m_score->SetPosition({-280.0f,200.0f});
+    app->m_Root.AddChild(m_score);
+
+    m_coin =std::make_shared<TEXTS>( std::to_string(app->Coins)) ;
+    m_coin->SetZIndex(100);
+    m_coin ->SetVisible(true);
+    m_coin->SetPosition({-130.0f,200.0f});
+    app->m_Root.AddChild(m_coin);
+
+    m_world =std::make_shared<TEXTS>( "1-2") ;
+    m_world->SetZIndex(100);
+    m_world ->SetVisible(true);
+    m_world->SetPosition({25.0f,200.0f});
+    app->m_Root.AddChild(m_world);
+
+    m_time =std::make_shared<TEXTS>( "0") ;
+    m_time->SetZIndex(100);
+    m_time ->SetVisible(true);
+    m_time->SetPosition({180.0f,200.0f});
+    app->m_Root.AddChild(m_time);
+
+    m_lives =std::make_shared<TEXTS>( std::to_string(app->MarioLives)) ;
+    m_lives->SetZIndex(100);
+    m_lives ->SetVisible(true);
+    m_lives->SetPosition({300.0f,200.0f});
+    app->m_Root.AddChild(m_lives);
+
     //Mario run forward
     MarioRun.reserve(5);
     MarioRun.emplace_back(GA_RESOURCE_DIR"/Mario/mario.png");
@@ -104,13 +141,13 @@ void FirstWorldTwo::StartLevel2(App *app) {
     m_title->SetPosition({0.0f,230.0f});
     app->m_Root.AddChild(m_title);
 
-    m_score =std::make_shared<TEXTS>( "0") ;
+    m_score =std::make_shared<TEXTS>( std::to_string(app->Scores)) ;
     m_score->SetZIndex(100);
     m_score ->SetVisible(true);
     m_score->SetPosition({-280.0f,200.0f});
     app->m_Root.AddChild(m_score);
 
-    m_coin =std::make_shared<TEXTS>( "0") ;
+    m_coin =std::make_shared<TEXTS>( std::to_string(app->Coins)) ;
     m_coin->SetZIndex(100);
     m_coin ->SetVisible(true);
     m_coin->SetPosition({-130.0f,200.0f});
@@ -1075,6 +1112,43 @@ void FirstWorldTwo::Finish(App *app) {
     m_Land[4]->SetPosition({-1000.0f,-1000.0f});
     m_Brick.clear();
     m_MovingPlatform2.clear();
+
+    //text
+    m_title =std::make_shared<TEXTS>( "SCORE            COINS             WORLD             TIME           LIVE") ;
+    m_title->SetZIndex(100);
+    m_title ->SetVisible(true);
+    m_title->SetPosition({0.0f,230.0f});
+    app->m_Root.AddChild(m_title);
+
+    m_score =std::make_shared<TEXTS>( std::to_string(app->Scores)) ;
+    m_score->SetZIndex(100);
+    m_score ->SetVisible(true);
+    m_score->SetPosition({-280.0f,200.0f});
+    app->m_Root.AddChild(m_score);
+
+    m_coin =std::make_shared<TEXTS>( std::to_string(app->Coins)) ;
+    m_coin->SetZIndex(100);
+    m_coin ->SetVisible(true);
+    m_coin->SetPosition({-130.0f,200.0f});
+    app->m_Root.AddChild(m_coin);
+
+    m_world =std::make_shared<TEXTS>( "1-2") ;
+    m_world->SetZIndex(100);
+    m_world ->SetVisible(true);
+    m_world->SetPosition({25.0f,200.0f});
+    app->m_Root.AddChild(m_world);
+
+    m_time =std::make_shared<TEXTS>( "0") ;
+    m_time->SetZIndex(100);
+    m_time ->SetVisible(true);
+    m_time->SetPosition({180.0f,200.0f});
+    app->m_Root.AddChild(m_time);
+
+    m_lives =std::make_shared<TEXTS>( std::to_string(app->MarioLives)) ;
+    m_lives->SetZIndex(100);
+    m_lives ->SetVisible(true);
+    m_lives->SetPosition({300.0f,200.0f});
+    app->m_Root.AddChild(m_lives);
 
     m_Bg2 = std::make_shared<Character>(GA_RESOURCE_DIR"/Background/PhaseFinish.png");
     m_Bg2->SetZIndex(2);

@@ -13,7 +13,6 @@
 #include "Util/Logger.hpp"
 #include "Util/Time.hpp"
 #include "Character.h"
-#include "QuestionTiles.h"
 
 class AnimatedCharacter : public Util::GameObject{
 public:

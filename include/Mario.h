@@ -245,6 +245,7 @@ public:
 
     int level = 0;
     int KillEnemy_in_a_row=0;
+    int timer = 0;
 
     //mushroom, coins
     bool isActive = false;

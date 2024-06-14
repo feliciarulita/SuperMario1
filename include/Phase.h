@@ -241,9 +241,9 @@ public:
     void MarioDeath(App *app);
 
     template <typename T>
-    void popupWhenKills(std::shared_ptr<T> enemy, int power);
+    void popupWhenKills(std::shared_ptr<T> enemy, int power, App *app);
 
-    void steppingKoopaTwice(std::shared_ptr<Koopa> koopa, std::shared_ptr<Mario> mario, std::vector<std::shared_ptr<Character>> wood, std::vector<std::shared_ptr<Brick>> bricks, bool red);
+    void steppingKoopaTwice(std::shared_ptr<Koopa> koopa, std::shared_ptr<Mario> mario, std::vector<std::shared_ptr<Character>> wood, std::vector<std::shared_ptr<Brick>> bricks, std::vector<std::shared_ptr<Character>> movingplatform,std::vector<std::shared_ptr<Character>> movingplatform2,std::vector<std::shared_ptr<Character>> land, bool red);
 
     float searchLand(std::shared_ptr<AnimatedCharacter>);
 

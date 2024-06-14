@@ -51,6 +51,8 @@ public:
 
     int MarioLevel = 0;
     int MarioLives = 3;
+    int Scores = 0;
+    int Coins = 0;
 
     bool debugMode = false;
 

@@ -11,41 +11,11 @@
 #include "Util/Animation.hpp"
 #include "Util/Logger.hpp"
 #include "Util/Time.hpp"
+#include "AnimatedCharacter.h"
 
-
-class QuestionTiles : public Util::GameObject {
+class QuestionTiles : public AnimatedCharacter {
 public:
     explicit QuestionTiles(const std::vector<std::string>& QuestionPaths);
-
-    [[nodiscard]] bool IsLooping() const {
-        return std::dynamic_pointer_cast<Util::Animation>(m_Drawable)->GetLooping();
-    }
-
-    [[nodiscard]] bool IsPlaying() const {
-        return std::dynamic_pointer_cast<Util::Animation>(m_Drawable)->GetState() == Util::Animation::State::PLAY;
-    }
-    void SetInterval(int milliseconds){
-        std::dynamic_pointer_cast<Util::Animation>(m_Drawable)->SetInterval(milliseconds);
-    }
-
-    void SetLooping(bool looping) {
-        auto temp = std::dynamic_pointer_cast<Util::Animation>(m_Drawable);
-        temp->SetLooping(looping);
-    }
-
-    [[nodiscard]] bool GetVisibility() const { return m_Visible; }
-    void SetPlaying(){
-        auto temp = std::dynamic_pointer_cast<Util::Animation>(m_Drawable);
-        temp->Play();
-
-    }
-    [[nodiscard]] const glm::vec2& GetPosition() const { return m_Transform.translation; }
-
-    void SetPosition(const glm::vec2& Position) { m_Transform.translation = Position; }
-
-    void SetImage(const std::string& ImagePath);
-
-    [[nodiscard]] bool IfAnimationEnds() const;
 
     bool isHeaded = false;
     bool isActive = true;
@@ -55,10 +25,6 @@ public:
 
     unsigned long marioHeadTime = 0;
 
-private:
-    void ResetPosition() { m_Transform.translation = {0, 0}; }
-
-    std::string m_ImagePath;
 };
 
 #endif //SUPERMARIO1_QUESTIONTILES_H
