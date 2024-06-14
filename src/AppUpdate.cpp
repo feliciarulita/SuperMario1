@@ -77,7 +77,7 @@ float Phase::gravity(float y_start, float time_gravity, const std::shared_ptr<An
     float height = y_start - searchLand(Object);
     float y_exact =y_start-((10.0f/2)*((sqrt((2*height)/10.0))*(sqrt((2*height)/10.0))));
 
-    if (Object->GetPosition().y<y_exact+15.0f){
+    if (Object->GetPosition().y<y_exact+25.0f){
         return y_exact;
     }
 
@@ -857,7 +857,7 @@ void Phase::Update(App *app){
 
 
     if (time >0) {
-        time = 400 - (static_cast<int>(timenow) / static_cast<int>(5));
+        time = 400 - (static_cast<int>(timenow) / static_cast<int>(10));
     }
     else {
         time =0;
@@ -865,6 +865,8 @@ void Phase::Update(App *app){
     if (time ==0 and !m_Mario->MarioDie){ MarioDeath(app);}
     // SET TITLE TEXT
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    if (m_popup1->timer==0 && m_popup2->timer==0 &&m_popup3->timer==0 &&m_popup4->timer==0 ){m_Mario->KillEnemy_in_a_row=0;}
 
     m_time->SetText(std::to_string(time));
     m_score->SetText(std::to_string(app->Scores));
@@ -876,7 +878,6 @@ void Phase::Update(App *app){
         //if on land then run
         LOG_DEBUG("mario on land");
         position = std::get<1>(result);
-        m_Mario->KillEnemy_in_a_row=0;
 
         marioStart = true;
 
@@ -1351,7 +1352,9 @@ void Phase::Update(App *app){
         //popup score need to fix!
 
         index2 = std::get<1>(stepOnKoo);
-        popupWhenKills(m_KoopaVec[index2], 30, app);
+        if (m_KoopaVec[index2]->stepTimes==0) {
+            popupWhenKills(m_KoopaVec[index2], 30, app);
+        }
 
         m_Mario->MarioStep = true;
         m_Mario->MarioStepKoopa = true;
@@ -1422,7 +1425,6 @@ void Phase::Update(App *app){
         if((i->IsCollideRightDead(m_KoopaVec) || i->IsCollideLeftDead(m_KoopaVec)) && i->isActive && !i->EnemyDie){
             i->isBounced = true;
             i->EnemyDie = true;
-            m_Mario->KillEnemy_in_a_row+=1;
             popupWhenKills(i, 0, app);
         }
         if(i->isBounced){
@@ -1437,7 +1439,6 @@ void Phase::Update(App *app){
         if(((m_KoopaVec[i]->IsCollideRightDead(m_KoopaVec,i)) || m_KoopaVec[i]->IsCollideLeftDead(m_KoopaVec,i))&& m_KoopaVec[i]->isActive && !m_KoopaVec[i]->EnemyDie2){
             LOG_DEBUG("koopa die twice");
             m_KoopaVec[i]->EnemyDie2 = true;
-            m_Mario->KillEnemy_in_a_row+=1;
             popupWhenKills(m_KoopaVec[i], 0, app);
         }
         if(m_KoopaVec[i]->EnemyDie2){
@@ -1450,8 +1451,6 @@ void Phase::Update(App *app){
     //if mario killed by enemy
     if((m_Mario->IsCollideRight(m_MushVector) || m_Mario->IsCollideLeft(m_MushVector) || m_Mario->IsCollideRight(m_KoopaVec) || m_Mario->IsCollideLeft(m_KoopaVec) || m_Mario->IsCollideLeft(m_KoopaRed) || m_Mario->IsCollideRight(m_KoopaRed)) && !m_Mario->MarioDie && !m_Mario->MarioStep && !m_Mario->MarioLevelingDown && !std::get<0>(stepOnMush) && !std::get<0>(stepOnKoo)){
         LOG_DEBUG("collide enemy");
-        m_Mario_dead_audio->SetVolume(50);
-        m_Mario_dead_audio->Play();
         m_MarioDiesTime = Util::Time::GetElapsedTimeMs();
 
 

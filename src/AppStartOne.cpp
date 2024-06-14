@@ -223,7 +223,7 @@ void FirstWorldOne::Start(App *app){
         m_Mushroom = std::make_shared<Mushroom>(Mushroom1);
         m_Mushroom->SetLooping(true);
         m_Mushroom->SetPlaying();
-        m_Mushroom->SetZIndex(5);
+        m_Mushroom->SetZIndex(10);
         m_Mushroom->SetVisible(false);
         m_MushVector.push_back(m_Mushroom);
 
