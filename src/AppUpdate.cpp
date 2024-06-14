@@ -221,6 +221,42 @@ void Phase::callMario(){
     m_Mario->SetPlaying();
 }
 
+template <typename T>
+void Phase::popupWhenKills(std::shared_ptr<T> enemy, int power) {
+    if (m_Mario->KillEnemy_in_a_row==0 && !m_popup1->GetVisibility()){
+        m_popup1->SetPosition(enemy->GetPosition());
+        m_popup1->timer=20;
+        m_Mario->KillEnemy_in_a_row=1;
+        score+= 100;
+        m_popup1->SetVisible(true);
+    }else if (m_Mario->KillEnemy_in_a_row==1 && !m_popup2->GetVisibility()){
+        m_popup2->SetPosition(enemy->GetPosition());
+        m_popup2->timer=20;
+        m_Mario->KillEnemy_in_a_row=2;
+        score+= 200;
+        m_popup2->SetVisible(true);
+    }else if (m_Mario->KillEnemy_in_a_row==2&& !m_popup3->GetVisibility()){
+        m_popup3->SetPosition(enemy->GetPosition());
+        m_popup3->timer=20;
+        m_Mario->KillEnemy_in_a_row=3;
+        score+= 300;
+        m_popup3->SetVisible(true);
+    }else if (m_Mario->KillEnemy_in_a_row==3&& !m_popup4->GetVisibility()){
+        m_popup4->SetPosition(enemy->GetPosition());
+        m_popup4->timer=20;
+        m_Mario->KillEnemy_in_a_row=4;
+        score+= 400;
+        m_popup4->SetVisible(true);
+    }
+    t=0;
+    m_Mario->PowerJump =power;
+    m_Mario->y_start_mario = searchLand(m_Mario)-10.0f;
+    m_Mario->m_Jump = true;
+
+    m_Mario_stomp_audio->SetVolume(75);
+    m_Mario_stomp_audio->Play();
+}
+
 void Phase::callMarioJump() {
     if(m_EnterRight){
         if(m_Mario->level==0){
@@ -239,6 +275,31 @@ void Phase::callMarioJump() {
         else if(m_Mario->level==1){
             m_Mario->SetImage(MarioJumpBackLvl2);
         }
+    }
+
+}
+
+void Phase::steppingKoopaTwice(std::shared_ptr<Koopa> koopa, std::shared_ptr<Mario> mario, std::vector<std::shared_ptr<Character>> wood, std::vector<std::shared_ptr<Brick>> bricks, bool red){
+    if(red){
+        if( mario->MarioStepKoopaRed && koopa->stepTimes==2){
+            koopa->levelUp = true;
+        }
+    }
+    else{
+        if( mario->MarioStepKoopa && koopa->stepTimes==2){
+            koopa->levelUp = true;
+        }
+    }
+
+
+    if(koopa->levelUp){
+        if( koopa->IsCollideRight(wood) || koopa->IsCollideRight(bricks)){
+            koopa->directionUp = -1.0f;
+        }
+        else if( koopa->IsCollideLeft(wood) || koopa->IsCollideLeft(bricks)){
+            koopa->directionUp = 1.0f;
+        }
+        koopa->SetPosition({koopa->GetPosition().x+(15.0f*koopa->directionUp),koopa->GetPosition().y});
     }
 
 }
@@ -371,7 +432,15 @@ float Phase::searchLand(const std::shared_ptr<AnimatedCharacter> Object){
             y = std::max(y,(m_Land2->GetPosition().y + (m_Land2->GetScaledSize().y/2)));
         }
     }
+    if(m_KoopaRed!= nullptr){
+        bool collideX1 = (x-Object->GetScaledSize().x/2+5.0f>=m_KoopaRed->GetPosition().x-((m_KoopaRed->GetScaledSize().x)/2))&&(x-Object->GetScaledSize().x/2+5.0f<=m_KoopaRed->GetPosition().x+m_KoopaRed->GetScaledSize().x/2);
+        bool collideX2 = (x+Object->GetScaledSize().x/2-5.0f>=m_KoopaRed->GetPosition().x-((m_KoopaRed->GetScaledSize().x)/2))&&(x+Object->GetScaledSize().x/2-5.0f<=m_KoopaRed->GetPosition().x+m_KoopaRed->GetScaledSize().x/2);
+        bool yPos = (Object->GetPosition().y > (m_KoopaRed->GetPosition().y));
 
+        if((collideX1 || collideX2) && yPos){
+            y = std::max(y,(m_KoopaRed->GetPosition().y + (m_KoopaRed->GetScaledSize().y/2)));
+        }
+    }
 
 
     y = y + Object->GetScaledSize().y/2;
@@ -732,7 +801,8 @@ bool Phase::IsCollideUp(){
     return false;
 }
 // control Mario death
-void Phase::MarioDeath(){
+void Phase::MarioDeath(App *app){
+    app->MarioLives -=1;
     m_MarioDiesTime = Util::Time::GetElapsedTimeMs();
     m_Mario->MarioDie = true;
     m_BGMusic->Pause();
@@ -766,17 +836,18 @@ void Phase::Update(App *app){
 
     }
     // Mario fall die
-    if (m_Mario->GetPosition().y < -200.0f && !m_Mario->MarioDie) {MarioDeath();}
+    if (m_Mario->GetPosition().y < -200.0f && !m_Mario->MarioDie) {MarioDeath(app);}
     // Control the time Management
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
     if (time >0) {
-        time = 400 - (static_cast<int>(timenow) / static_cast<int>(10));
+        time = 400 - (static_cast<int>(timenow) / static_cast<int>(5));
     }
     else {
         time =0;
     }
+    if (time ==0 and !m_Mario->MarioDie){ MarioDeath(app);}
     // SET TITLE TEXT
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -849,7 +920,7 @@ void Phase::Update(App *app){
 
     //press F to go to next 部分 of map
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    if(Util::Input::IsKeyDown(Util::Keycode::F)){
+    if(Util::Input::IsKeyDown(Util::Keycode::F) && (app->debugMode)){
         moveBackground(2400.0f,app);
 
         m_Mario->SetPosition({m_Mario->GetPosition().x,100.0f});
@@ -892,9 +963,9 @@ void Phase::Update(App *app){
                     }
                 }
             }
-            //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-            //Control Movement to left
-            //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                //Control Movement to left
+                //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             else if (m_Mario->speed < 0) {
                 if (m_Mario->GetPosition().x > -340.0f and !IsCollideLeft(m_Mario)) {
                     m_Mario->SetPosition({m_Mario->GetPosition().x + m_Mario->speed, m_Mario->GetPosition().y});
@@ -1132,55 +1203,70 @@ void Phase::Update(App *app){
             m_KoopaVec[i]->isActive = true;
         }
 
-        if(!std::get<0> (IsOnLand(m_KoopaVec[i])) && m_KoopaVec[i]->isActive ){
-            m_KoopaVec[i]->SetPosition({m_KoopaVec[i]->GetPosition().x-1.0f,m_KoopaVec[i]->GetPosition().y- 5.0f});
-        }
+        if (m_KoopaVec[i]->isActive) {
 
-        // koopa moving x-axis
-        else if(m_KoopaVec[i]->isActive && !m_KoopaVec[i]->EnemyDie){
-            bool collides = false;
-
-            if(m_KoopaVec[i]->IsCollideLeft(m_Tube) || m_KoopaVec[i]->IsCollideLeft(m_Brick) || m_KoopaVec[i]->IsCollideLeft(m_Wood) || m_KoopaVec[i]->IsCollideLeft(m_KoopaVec,i)|| m_KoopaVec[i]->IsCollideLeft(m_MushVector)||m_KoopaVec[i]->IsCollideLeft(m_Brick)|| m_KoopaVec[i]->IsCollideLeft(m_Tube)){ // add if collide with koopa
-
-                //set the koopa's image
-                m_KoopaVec[i]->direction = 1.0f;
-                collides = true;
-
-            }else if(m_KoopaVec[i]->IsCollideRight(m_Tube) || m_KoopaVec[i]->IsCollideRight(m_Brick) || m_KoopaVec[i]->IsCollideRight(m_Wood) ||m_KoopaVec[i]->IsCollideRight(m_KoopaVec,i)|| m_KoopaVec[i]->IsCollideRight(m_MushVector)||m_KoopaVec[i]->IsCollideRight(m_Brick)|| m_KoopaVec[i]->IsCollideRight(m_Tube)){
-                collides = true;
-                m_KoopaVec[i]->direction = -1.0f;
-
-
+            // koopa moving Y-axis when it isn't on land
+            if (!std::get<0>(IsOnLand(m_KoopaVec[i]))) {
+                m_KoopaVec[i]->SetPosition({m_KoopaVec[i]->GetPosition().x+ m_KoopaVec[i]-> direction,
+                                            gravity(m_KoopaVec[i]->Y_start_koopa, m_KoopaVec[i]->time_koopa,
+                                                    m_KoopaVec[i])});
+                m_KoopaVec[i]-> time_koopa +=1;
             }
 
-            if(!m_KoopaVec[i]->levelUp && !collides && m_KoopaVec[i]->stepTimes==0){
 
-                if (m_KoopaVec[i]->direction==1) {
-                    m_KoopaVec[i]->SetImage(KoopaBack);
-                    m_KoopaVec[i]->SetInterval(100);
-                    m_KoopaVec[i]->SetLooping(true);
-                    m_KoopaVec[i]->SetPlaying();
-                    m_KoopaVec[i]->direction = 2.0f;
+
+
+                // koopa moving x-axis
+            else if (std::get<0>(IsOnLand(m_KoopaVec[i]))&& !m_KoopaVec[i]->EnemyDie2) {
+                m_KoopaVec[i]->Y_start_koopa = m_KoopaVec[i]->GetPosition().y;
+                m_KoopaVec[i]-> time_koopa =0;
+
+
+                bool collides = false;
+
+                if (m_KoopaVec[i]->IsCollideLeft(m_Tube) || m_KoopaVec[i]->IsCollideLeft(m_Brick) ||
+                    m_KoopaVec[i]->IsCollideLeft(m_Wood) || m_KoopaVec[i]->IsCollideLeft(m_KoopaVec, i) ||
+                    m_KoopaVec[i]->IsCollideLeft(m_MushVector) || m_KoopaVec[i]->IsCollideLeft(m_Brick) ||
+                    m_KoopaVec[i]->IsCollideLeft(m_Tube)) { // add if collide with koopa
+
+                    //set the koopa's image
+                    m_KoopaVec[i]->direction = 1.0f;
+                    collides = true;
+
+                } else if (m_KoopaVec[i]->IsCollideRight(m_Tube) || m_KoopaVec[i]->IsCollideRight(m_Brick) ||
+                           m_KoopaVec[i]->IsCollideRight(m_Wood) || m_KoopaVec[i]->IsCollideRight(m_KoopaVec, i) ||
+                           m_KoopaVec[i]->IsCollideRight(m_MushVector) || m_KoopaVec[i]->IsCollideRight(m_Brick) ||
+                           m_KoopaVec[i]->IsCollideRight(m_Tube)) {
+                    collides = true;
+                    m_KoopaVec[i]->direction = -1.0f;
+
+
                 }
+                // change koopa picture, when it change direction
+                if (!m_KoopaVec[i]->levelUp && ! collides && m_KoopaVec[i]->stepTimes == 0) {
 
-                else if (m_KoopaVec[i]->direction==-1){
-                    m_KoopaVec[i]->SetImage(KoopaPic);
-                    m_KoopaVec[i]->SetInterval(100);
-                    m_KoopaVec[i]->SetLooping(true);
-                    m_KoopaVec[i]->SetPlaying();
-                    m_KoopaVec[i]->direction = -2.0f;
+                    if (m_KoopaVec[i]->direction == 1) {
+                        m_KoopaVec[i]->SetImage(KoopaBack);
+                        m_KoopaVec[i]->SetInterval(100);
+                        m_KoopaVec[i]->SetLooping(true);
+                        m_KoopaVec[i]->SetPlaying();
+                        m_KoopaVec[i]->direction = 2.0f;
+                    } else if (m_KoopaVec[i]->direction == -1) {
+                        m_KoopaVec[i]->SetImage(KoopaPic);
+                        m_KoopaVec[i]->SetInterval(100);
+                        m_KoopaVec[i]->SetLooping(true);
+                        m_KoopaVec[i]->SetPlaying();
+                        m_KoopaVec[i]->direction = -2.0f;
+                    }
+
                 }
-
-            }
-            if(m_KoopaVec[i]->stepTimes==0  ) {
-                m_KoopaVec[i]->SetPosition({m_KoopaVec[i]->GetPosition().x + (m_KoopaVec[i]->direction), m_KoopaVec[i]->GetPosition().y});
+                if (m_KoopaVec[i]->stepTimes == 0) {
+                    m_KoopaVec[i]->SetPosition({m_KoopaVec[i]->GetPosition().x + (m_KoopaVec[i]->direction),
+                                                m_KoopaVec[i]->GetPosition().y});
+                }
             }
         }
     }
-
-
-
-
 
     //yellow mush
     for (const auto & i :m_YellowMushVec){
@@ -1210,44 +1296,11 @@ void Phase::Update(App *app){
     //if mario kills enemy
     if((std::get<0>(stepOnMush)) && !m_Mario->MarioStep && !m_Mario->MarioDie && !m_MushVector[std::get<1>(stepOnMush)]->EnemyDie){
         index = std::get<1>(stepOnMush);
-        if (m_Mario->KillEnemy_in_a_row==0 && !m_popup1->GetVisibility()){
-            m_popup1->SetPosition(m_MushVector[index]->GetPosition());
-            m_popup1->timer=20;
-            m_Mario->KillEnemy_in_a_row=1;
-            score+= 100;
-            m_popup1->SetVisible(true);
-        }else if (m_Mario->KillEnemy_in_a_row==1 && !m_popup2->GetVisibility()){
-            m_popup2->SetPosition(m_MushVector[index]->GetPosition());
-            m_popup2->timer=20;
-            m_Mario->KillEnemy_in_a_row=2;
-            score+= 200;
-            m_popup2->SetVisible(true);
-        }else if (m_Mario->KillEnemy_in_a_row==2&& !m_popup3->GetVisibility()){
-            m_popup3->SetPosition(m_MushVector[index]->GetPosition());
-            m_popup3->timer=20;
-            m_Mario->KillEnemy_in_a_row=3;
-            score+= 300;
-            m_popup3->SetVisible(true);
-        }else if (m_Mario->KillEnemy_in_a_row==3&& !m_popup4->GetVisibility()){
-            m_popup4->SetPosition(m_MushVector[index]->GetPosition());
-            m_popup4->timer=20;
-            m_Mario->KillEnemy_in_a_row=4;
-            score+= 400;
-            m_popup4->SetVisible(true);
-        }
-        t=0;
-        m_Mario->PowerJump =20;
-        m_Mario->y_start_mario = searchLand(m_Mario)-10.0f;
-        m_Mario->m_Jump = true;
-
-
-        m_Mario_stomp_audio->SetVolume(75);
-        m_Mario_stomp_audio->Play();
-
+        popupWhenKills(m_MushVector[index],20);
         m_Mario->MarioStep = true;
         m_MarioStepTime = Util::Time::GetElapsedTimeMs();
 
-        m_MushVector[index]->SetImage(GA_RESOURCE_DIR"/images/goombas_dead.png");
+        m_MushVector[index]->SetImage(MushroomDead1);
 
         m_MushVector[index]->EnemyDie = true;
 
@@ -1280,35 +1333,7 @@ void Phase::Update(App *app){
         //popup score need to fix!
 
         index2 = std::get<1>(stepOnKoo);
-        if (m_Mario->KillEnemy_in_a_row==0 && m_KoopaVec[index2]->stepTimes ==0){
-            m_popup1->SetPosition(m_KoopaVec[index2]->GetPosition());
-            m_popup1->timer=20;
-            m_Mario->KillEnemy_in_a_row=1;
-            score+= 100;
-            m_popup1->SetVisible(true);
-        }else if (m_Mario->KillEnemy_in_a_row==1 && m_KoopaVec[index2]->stepTimes ==0){
-            m_popup2->SetPosition(m_KoopaVec[index2]->GetPosition());
-            m_popup2->timer=20;
-            m_Mario->KillEnemy_in_a_row=2;
-            score+= 200;
-            m_popup2->SetVisible(true);
-        }else if (m_Mario->KillEnemy_in_a_row==2&& m_KoopaVec[index2]->stepTimes ==0){
-            m_popup3->SetPosition(m_KoopaVec[index2]->GetPosition());
-            m_popup3->timer=20;
-            m_Mario->KillEnemy_in_a_row=3;
-            score+= 300;
-            m_popup3->SetVisible(true);
-        }
-
-        t=0;
-        m_Mario->PowerJump =30;
-        m_Mario->y_start_mario = searchLand(m_Mario)-10.0f;
-        m_Mario->m_Jump = true;
-
-
-        m_Mario_stomp_audio->SetVolume(75);
-        m_Mario_stomp_audio->Play();
-
+        popupWhenKills(m_KoopaVec[index2], 30);
 
         m_Mario->MarioStep = true;
         m_Mario->MarioStepKoopa = true;
@@ -1317,8 +1342,9 @@ void Phase::Update(App *app){
         index2 = std::get<1>(stepOnKoo);
         m_KoopaVec[index2]->SetImage(KoopaDeadPic);
         m_KoopaVec[index2]->stepTimes +=1;
+        //check again
         if(m_KoopaVec[index2]->stepTimes>2){
-            m_KoopaVec[index2]->stepTimes = 0;
+            m_KoopaVec[index2]->stepTimes = 2;
         }
 
 
@@ -1339,18 +1365,35 @@ void Phase::Update(App *app){
 
     }
     //if mario step koopa twice
-    if( m_Mario->MarioStepKoopa && m_KoopaVec[index2]->stepTimes==2){
-        m_KoopaVec[index2]->levelUp = true;
-    }
-    if(m_KoopaVec[index2]->levelUp){
-        if( m_KoopaVec[index2]->IsCollideRight(m_Wood)){
-            m_KoopaVec[index2]->directionUp = -1.0f;
+    steppingKoopaTwice(m_KoopaVec[index2],m_Mario,m_Wood,m_Brick,false);
+
+    //if mario kills koopa red
+    if(m_Mario->IsStepOn(m_KoopaRed)  && !m_Mario->MarioDie){
+        popupWhenKills(m_KoopaRed,30);
+
+
+        m_Mario->MarioStep = true;
+        m_Mario->MarioStepKoopaRed = true;
+
+        m_MarioStepTime = Util::Time::GetElapsedTimeMs();
+        m_KoopaRed->SetImage(KoopaDeadPic);
+        m_KoopaRed->stepTimes +=1;
+        //check again
+        if(m_KoopaRed->stepTimes>2){
+            m_KoopaRed->stepTimes = 2;
         }
-        else if( m_KoopaVec[index2]->IsCollideLeft(m_Wood)){
-            m_KoopaVec[index2]->directionUp = 1.0f;
+
+
+        if(m_Mario->GetPosition().x <= m_KoopaRed->GetPosition().x){
+            m_KoopaRed->directionUp = 1.0f;
         }
-        m_KoopaVec[index2]->SetPosition({m_KoopaVec[index2]->GetPosition().x+(15.0f*m_KoopaVec[index2]->directionUp),m_KoopaVec[index2]->GetPosition().y});
+        else if(m_Mario->GetPosition().x > m_KoopaRed->GetPosition().x){
+            m_KoopaRed->directionUp = -1.0f;
+        }
     }
+    //if mario step red koopa twice
+    steppingKoopaTwice(m_KoopaRed,m_Mario,m_Wood,m_Brick,true);
+
 
     //if mush killed by koopa
     for(const auto & i : m_MushVector){
@@ -1378,17 +1421,15 @@ void Phase::Update(App *app){
         }
     }
 
-
-
     //if mario killed by enemy
-    if((m_Mario->IsCollideRight(m_MushVector) || m_Mario->IsCollideLeft(m_MushVector) || m_Mario->IsCollideRight(m_KoopaVec) || m_Mario->IsCollideLeft(m_KoopaVec)) && !m_Mario->MarioDie && !m_Mario->MarioStep && !m_Mario->MarioLevelingDown && !std::get<0>(stepOnMush) && !std::get<0>(stepOnKoo)){
+    if((m_Mario->IsCollideRight(m_MushVector) || m_Mario->IsCollideLeft(m_MushVector) || m_Mario->IsCollideRight(m_KoopaVec) || m_Mario->IsCollideLeft(m_KoopaVec) || m_Mario->IsCollideLeft(m_KoopaRed) || m_Mario->IsCollideRight(m_KoopaRed)) && !m_Mario->MarioDie && !m_Mario->MarioStep && !m_Mario->MarioLevelingDown && !std::get<0>(stepOnMush) && !std::get<0>(stepOnKoo)){
         LOG_DEBUG("collide enemy");
         m_Mario_dead_audio->SetVolume(50);
         m_Mario_dead_audio->Play();
         m_MarioDiesTime = Util::Time::GetElapsedTimeMs();
 
 
-        if(m_Mario->level<=0){MarioDeath();}
+        if(m_Mario->level<=0){MarioDeath(app);}
         else{
             m_Mario->level=0;
             MarioLevel=0;
@@ -1435,7 +1476,7 @@ void Phase::Update(App *app){
             m_Mario_bump_audio->SetVolume(0);
             m_Mario_bump_audio->Play();
         }
-        // when mario big or mario level = 1, so brick will crack
+            // when mario big or mario level = 1, so brick will crack
         else if (m_Mario->level >= 1){
             // is brick =2 => brick will crack
             m_Brick_Break_audio->SetVolume(75);
@@ -1538,7 +1579,8 @@ void Phase::Update(App *app){
                 i->SetPosition({-1000.0f,-1000.0f});
                 PowerUP_audio->SetVolume(50);
                 PowerUP_audio->Play();
-                m_Mario->level+=1;
+                m_Mario->level=1;
+                app->MarioLevel=1;
 
                 if(m_EnterRight){
                     m_Mario->SetImage(levelUp);
@@ -1558,13 +1600,6 @@ void Phase::Update(App *app){
     //if mario leveling up
     if(m_Mario->MarioLevelingUp && !m_Mario->IsPlaying()){
         m_Mario->MarioLevelingUp = false;
-    }
-    //debugging
-
-    if(isBrick==3){
-        LOG_DEBUG("isbrick==3");
-        LOG_DEBUG(m_QuesVector[indexTiles2]->isActive);
-        LOG_DEBUG(m_Mario->MarioHeadQues);
     }
     //heading brick and question
     if( (isBrick==1 || isBrick ==2 )&&(m_Mario->MarioHeadBrick)){
@@ -1595,6 +1630,9 @@ void Phase::Update(App *app){
                 m_BrickMove[i]->SetPosition({m_BrickMove[i]->GetPosition().x,m_BrickMove[i]->GetPosition().y+5.0f});
                 auto isheaded = m_BrickMove[i]->IsHeaded(m_Coins2Vec);
                 if(std::get<0>(isheaded)){
+                    m_Mario_coin_audio->SetVolume(75);
+                    m_Mario_coin_audio->Play();
+
                     int index = std::get<1>(isheaded);
                     LOG_DEBUG("msk isheaded");
                     m_Coins[index+5]->headedBy = 0;
@@ -1662,7 +1700,7 @@ void Phase::Update(App *app){
                     m_Coins[i]->SetPosition({-1000.0f,-1000.0f});
                 }
             }
-            //by question
+                //by question
             else if(m_Coins[i]->headedBy==1){
                 if(now3 - m_QuesVector[i]->marioHeadTime<=450){
                     m_Coins[i]->SetPosition({m_Coins[i]->GetPosition().x,m_Coins[i]->GetPosition().y+8.0f});
@@ -1681,7 +1719,6 @@ void Phase::Update(App *app){
 
 
     // Makes the Brick Breaking independently => when m_Mario => (level==1) => collide up
-
     for (int i=0 ; i<m_Brick_break.size();i++){
         for (int Brickbat_index =0 ; Brickbat_index< m_Brick_break[i].size()-1;Brickbat_index++) {
             auto Brickbat_each = m_Brick_break[i][Brickbat_index];
@@ -1692,11 +1729,11 @@ void Phase::Update(App *app){
 
                 //Control the movement of Left top Brickbat
                 if (Brickbat_index==0) {Angle_cos = -0.087; Angle_sin = 0.99 ;}
-                //Control the movement of Left bottom Brickbat
+                    //Control the movement of Left bottom Brickbat
                 else if (Brickbat_index==1) {Angle_cos = -0.17; Angle_sin = 0.98 ;}
-                //Control the movement of Right top Brickbat
+                    //Control the movement of Right top Brickbat
                 else if (Brickbat_index==2){ Angle_cos = 0.087; Angle_sin = 0.99 ;}
-                //Control the movement of Right bottom Brickbat
+                    //Control the movement of Right bottom Brickbat
                 else if (Brickbat_index==3) {Angle_cos = 0.17; Angle_sin = 0.98 ;}
 
                 Brickbat_each->SetPosition(ParabolicMovement(30,Angle_cos,Angle_sin,Brickbat_each->CharacterTimePhysics,StartPoint));
@@ -1771,8 +1808,8 @@ void Phase::Update(App *app){
 
     }
 
-    //mario levelup
-    LOG_INFO("Mario POs");
+    //mario position
+    LOG_INFO("Mario Pos");
     LOG_INFO(m_Mario->GetPosition().x);
     LOG_INFO(m_Mario->GetPosition().y);
 
@@ -1802,8 +1839,12 @@ void Phase::Update(App *app){
         for(const auto & i : m_Coins2Vec){
             if(i->IsCollideRight(m_Mario) || i->IsCollideLeft(m_Mario)){
                 //add sfx
+                m_Mario_coin_audio->SetVolume(75);
+                m_Mario_coin_audio->Play();
                 app->m_Root.RemoveChild(i);
+                i->SetPosition({-1000.0f,-1000.0f});
                 score = score + 100;
+                coin+=1;
             }
         }
         if(m_MovingPlatform[0]->GetVisibility()){
@@ -1835,18 +1876,32 @@ void Phase::Update(App *app){
         }
 
         if(m_Piranhas[0]->GetVisibility()){
-            if(piranhaOutTime<50){
-                for(const auto & i : m_Piranhas){
-                    i->SetPosition({i->GetPosition().x,i->GetPosition().y+1.0f});
+            for(const auto & i : m_Piranhas){
+                if(i->timer <= 0){
+                    if(i->goUpTime < 50){
+                        i->SetPosition({i->GetPosition().x,i->GetPosition().y+1.0f});
+                        i->goUpTime+=1;
+                    }
+                    else if(i->goUpTime >= 50 && i->goUpTime < 100){
+                        i->SetPosition({i->GetPosition().x,i->GetPosition().y-1.0f});
+                        i->goUpTime+=1;
+                    }
+                    if(i->goUpTime == 100){
+                        i->goUpTime = 0;
+                    }
+
                 }
-            }
-            else if(piranhaOutTime >= 50 && piranhaOutTime < 100){
-                for(const auto & i : m_Piranhas){
-                    i->SetPosition({i->GetPosition().x,i->GetPosition().y-1.0f});
+
+                if(i->timer == 0){
+                    if(FinishLevel){
+                        LOG_DEBUG("go in here");
+                        i->SetPosition({i->GetPosition().x,-140.0f});
+                    }
                 }
-            }
-            else{
-                piranhaOutTime = 0;
+                i->timer-=1;
+
+
+
             }
             piranhaOutTime+=1;
         }
@@ -1854,7 +1909,7 @@ void Phase::Update(App *app){
             m_Mario->MarioDie = true;
         }
         //koopa red
-        if(koopaRedTime==124){
+        if(koopaRedTime==124 && m_KoopaRed->stepTimes==0){
             m_KoopaRed->direction = m_KoopaRed->direction*(-1.0f);
             if(m_KoopaRed->direction < 0){
                 m_KoopaRed->SetImage(KoopaPic);
@@ -1868,7 +1923,7 @@ void Phase::Update(App *app){
             m_KoopaRed->SetPlaying();
             koopaRedTime = 0;
         }
-        else{
+        else if (m_KoopaRed->stepTimes == 0){
             m_KoopaRed->SetPosition({m_KoopaRed->GetPosition().x+(2.0f*m_KoopaRed->direction),m_KoopaRed->GetPosition().y});
         }
         koopaRedTime+=1;
@@ -1886,7 +1941,7 @@ void Phase::Update(App *app){
     }
 
 
-    //DO NOT MOVE OR ADD SOMETHING UNDER THESE TWO!!
+    //DO NOT MOVE OR ADD SOMETHING UNDER THESE!!
     //mario go up now
     if(m_Mario->MarioGoUp && m_Mario->GetPosition().x>=50){
         LOG_DEBUG("masuk state finish");
@@ -1899,7 +1954,7 @@ void Phase::Update(App *app){
         SetState(State::END);
 
     }
-    //if die
+        //if die
     else if(m_Mario->MarioDie){
         m_popup1->SetVisible(false);
         unsigned long now = Util::Time::GetElapsedTimeMs();
@@ -1911,10 +1966,13 @@ void Phase::Update(App *app){
         else{
             m_Mario->SetPosition({m_Mario->GetPosition().x,m_Mario->GetPosition().y-5.0f});
 
-            if(m_Mario->GetPosition().y<-400.0f){
-                LOG_DEBUG("mario die");
+            //game over
+            if(app->MarioLives == 0 && (m_Mario->GetPosition().y < -500.0f) && app->debugMode){
                 Restart(app);
-                LOG_DEBUG("mario die2");
+                SetState(State::GAMEOVER);
+            }
+            else if(m_Mario->GetPosition().y<-500.0f){
+                Restart(app);
                 SetState(State::START);
             }
         }
@@ -1922,7 +1980,7 @@ void Phase::Update(App *app){
     }
 
     //restart
-    if(Util::Input::IsKeyPressed(Util::Keycode::R)){
+    if(Util::Input::IsKeyPressed(Util::Keycode::R) && (app->debugMode)){
         Restart(app);
         SetState(State::START);
     }
@@ -1932,7 +1990,7 @@ void Phase::Update(App *app){
     app->m_Root.Update();
 
     //NEXT LEVEL
-    if(isWinLevel || Util::Input::IsKeyPressed(Util::Keycode::N)){
+    if(isWinLevel || (Util::Input::IsKeyPressed(Util::Keycode::N) && (app->debugMode)) ){
         LOG_DEBUG("next level");
         //blm di restart
         //NextLevel(app);

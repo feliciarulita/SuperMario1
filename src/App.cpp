@@ -63,6 +63,9 @@ void App::Update(){
         else if(m_CurrentPhase->GetCurrentState() == Phase::State::WINLEVEL2){
             m_CurrentPhase->WinLevel2(this);
         }
+        else if(m_CurrentPhase->GetCurrentState() == Phase::State::GAMEOVER){
+            m_CurrentPhase->GameOver(this);
+        }
     }
 }
 

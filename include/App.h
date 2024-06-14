@@ -50,6 +50,9 @@ public:
     Phases m_Phase = Phases::MENU;
 
     int MarioLevel = 0;
+    int MarioLives = 3;
+
+    bool debugMode = false;
 
 };
 

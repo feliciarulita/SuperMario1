@@ -19,6 +19,8 @@ public:
     explicit Piranha(const std::vector<std::string> & AnimationPaths);
 
     int direction = 1;
+    int timer = 0;
+    int goUpTime = 0;
 
     bool goUp = true;
     bool EnemyDie = false;

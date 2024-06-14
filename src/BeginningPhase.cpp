@@ -21,6 +21,12 @@ void BeginningPhase::Start(App *app){
 
 void BeginningPhase::Update(App *app){
     app->m_Root.Update();
+    if(Util::Input::IsKeyDown(Util::Keycode::D)){
+        app->debugMode = true;
+        app->SetPhase(App::Phases::FIRST_WORLD_ONE);
+        app->ChangePhase(App::Phases::FIRST_WORLD_ONE);
+    }
+
     if(Util::Input::IsKeyDown(Util::Keycode::ESCAPE)){
         SetState(State::END);
     }
